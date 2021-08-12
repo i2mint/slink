@@ -35,6 +35,10 @@ The purpose of `slink` is to provide tools to get from params to this `wf`, or w
 The main means of doing so is through a chain of sequences each one being a function of the previous. 
 This function could do things like...
 
+<img src="https://user-images.githubusercontent.com/1906276/129180811-c6f94159-8a9b-4f42-9f99-34607ade643d.png" alt="drawing" style="width:1200px"/>
+
+<img src="https://user-images.githubusercontent.com/1906276/129182049-c6717da0-3251-4f1a-bf75-163c92db42da.png" alt="drawing" style="width:1200px"/>
+
 ```python
 a, b, c... -> wf_for(a), wf_for(b), wf_for(c), ...  # generate elements of the next sequence based on the items of the last
 wf_a, wf_b, wf_c... -> add_noise(wf_a), add_noise(wf_b), add_noise(wf_c), ... # transform the items of the last sequence
