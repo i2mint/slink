@@ -1,4 +1,6 @@
-# Objective
+# Design notes
+
+## Objective
 
 This package offers tools for generating sequences. Finite ones like lists and arrays, or infinite ones like streams. 
 
@@ -10,7 +12,7 @@ For starters, our main focus will be generating sound -- that is, servicing the 
 Our main tools will be taken from [creek](https://github.com/i2mint/creek) and possibly [lined]()
 
 
-# Design
+## Design
 
 Our running examples will be taken from audio production. 
 We'll use `wf` to denote a waveform object (usually a list or array of numbers -- a.k.a. samples or frames). 
@@ -28,6 +30,12 @@ The purpose of `slink` is to provide tools to get from params to this `wf`, or w
 The main means of doing so is through a chain of sequences each one being a function of the previous. 
 This function could do things like...
 
+
+<img src="https://user-images.githubusercontent.com/1906276/129180811-c6f94159-8a9b-4f42-9f99-34607ade643d.png" alt="drawing" style="width:1200px"/>
+
+<img src="https://user-images.githubusercontent.com/1906276/129182049-c6717da0-3251-4f1a-bf75-163c92db42da.png" alt="drawing" style="width:1200px"/>
+
+
 ```python
 a, b, c... -> wf_for(a), wf_for(b), wf_for(c), ...  # generate elements of the next sequence based on the items of the last
 wf_a, wf_b, wf_c... -> add_noise(wf_a), add_noise(wf_b), add_noise(wf_c), ... # transform the items of the last sequence
@@ -40,8 +48,8 @@ All but the last sequence functions above were all
 - `reduce` (aggregating all sequence items into one object -- though that object may be a sequence itself)
 
 But some functions can have more complex mechanisms such as inner-state and buffers. 
-This is important to note, since the developer may be tempted to accomodate for sequence functions that operate on a window instead of a single item. 
-But accomodating for this directly would complexify the interface.
+This is important to note, since the developer may be tempted to accommodate for sequence functions that operate on a window instead of a single item. 
+But accommodating for this directly would complexify the interface.
 Instead, we propose to use a mechanism like `lined.BufferStats` to offer a window-input functionality with a single-item-at-a-time interface.
 
 ## Examples of sequence functions
@@ -66,4 +74,3 @@ seq_func_2 = iterize(Line(num_to_cat, item_func_1))
 ```
 
 `Line` composes `num_to_cat` and `item_func_1` and `iterize` makes the item-to-item function into a sequence-to-sequence function.
-

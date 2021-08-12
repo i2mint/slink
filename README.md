@@ -51,8 +51,8 @@ All but the last sequence functions above were all
 - `reduce` (aggregating all sequence items into one object -- though that object may be a sequence itself)
 
 But some functions can have more complex mechanisms such as inner-state and buffers. 
-This is important to note, since the developer may be tempted to accomodate for sequence functions that operate on a window instead of a single item. 
-But accomodating for this directly would complexify the interface.
+This is important to note, since the developer may be tempted to accommodate for sequence functions that operate on a window instead of a single item. 
+But accommodating for this directly would complexify the interface.
 Instead, we propose to use a mechanism like `lined.BufferStats` to offer a window-input functionality with a single-item-at-a-time interface.
 
 ## Examples of sequence functions
