@@ -43,6 +43,15 @@ class RandomGeneratorBase:
 
 
 @dataclass
+class RandomGenerator(RandomGeneratorBase):
+    random_gen: Callable[[], Any]
+    chunk_container: Callable = list
+
+    def generate_one(self):
+        return self.random_gen()
+
+
+@dataclass
 class RandomCategoricalGenerator(RandomGeneratorBase):
     """Generate categorical data in a controlled random way
 
