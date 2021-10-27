@@ -335,32 +335,6 @@ class Expand(MultiFunc):
             yield seed_dict
 
 
-# class TreeTraversalGeneration(MultiFunc):
-#     def __init__(self, **unnamed_funcs):
-#         super().__init__(**unnamed_funcs)
-#         self.sigs = {name: Sig(func) for name, func in self.items()}
-#
-#     def __call__(self, seed_dict=None, preproc=copy.copy):
-#         if seed_dict is None:
-#             seed_dict = dict()
-#         elif callable(seed_dict):
-#             seed_dict_factory = seed_dict
-#             seed_dict = seed_dict_factory()
-#         if preproc:  # should we
-#             seed_dict = preproc(seed_dict)
-#         assert isinstance(seed_dict, dict)
-#
-#         for assign_to_name, func in self.items():
-#             if isinstance(func, Expand):
-#                 yield from func(seed_dict)
-#             else:
-#                 seed_dict[assign_to_name] = _call_from_dict(
-#                     seed_dict, func, self.sigs[assign_to_name]
-#                 )
-#             # seed_dict[key] = call_forgivingly(func, **seed_dict)
-#         yield seed_dict
-
-
 def mk_monotone_sequence(delta_val_func=random.random, *args, start=0, **kwargs):
     """Make a monotone sequence of numbers by accumulating
 
