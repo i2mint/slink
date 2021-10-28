@@ -8,5 +8,17 @@ from slink.seed_functions import (
 )
 
 from slink.sequences import (
-    IterativeDictProcessing
+    IterativeDictProcessing,
+    Repeater,
+    DictChain,
+    dict_generator,
+    mk_monotone_sequence
 )
+
+from slink.util import (
+    GetFromIter,
+    select_fields,
+)
+
+# External tools that are useful to slink
+from lined import CommandIter

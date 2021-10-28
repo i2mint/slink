@@ -26,61 +26,6 @@ def _call_from_dict(kwargs: dict, func: Callable, sig: Sig):
     return func(*args, **kwargs)
 
 
-field_is_missing = type('field_is_missing', (), {})()
-
-
-def _select_fields(d: dict, fields, handle_missing: Optional[str] = None, default=None):
-    """Helper of select_fields; selects fields from a single dict,
-    with control on what to do if the field is missing.
-
-    >>> d = {'a': 1, 'b': 2, 'c': 3}
-    >>> dict(_select_fields(d, ['c', 'a']))
-    {'c': 3, 'a': 1}
-    >>> dict(_select_fields(d, ['c', 'd', 'a'], handle_missing='default'))
-    {'c': 3, 'd': None, 'a': 1}
-    """
-    if not handle_missing:
-        for field in fields:
-            yield field, d[field]
-    elif handle_missing == 'skip':
-        for field in fields:
-            val = d.get(field, field_is_missing)
-            if val is not field_is_missing:
-                yield field, d[field]
-    elif handle_missing == 'default':
-        for field in fields:
-            yield field, d.get(field, default)
-    else:
-        raise ValueError(f'Unknown handle_missing value')
-
-
-def select_fields(
-    iterable_of_dicts: Iterable[dict],
-    fields,
-    handle_missing: Optional[str] = None,
-    default=None,
-):
-    """Get an iterable of "sub-dicts". That is, dicts with only specified fields.
-    Further, the  order of the fields will be as specified in the `fields` argument.
-
-    By default `handle_missing=False`; any missing fields will raise a KeyError.
-    To fallback to a default in this case, set `handle_missing=False` and
-    optionally specify the desired default.
-
-    >>> iterable_of_dicts = [{'a': 1, 'b': 2, 'c': 3}, {'a': 10, 'b': 20}]
-    >>> list(select_fields(iterable_of_dicts, fields=['c', 'a'], handle_missing='skip'))
-    [{'c': 3, 'a': 1}, {'a': 10}]
-    >>> list(select_fields(
-    ... iterable_of_dicts, fields=['c', 'a'], handle_missing='default', default=999)
-    ... )
-    [{'c': 3, 'a': 1}, {'c': 999, 'a': 10}]
-    """
-    selector = partial(
-        _select_fields, fields=fields, handle_missing=handle_missing, default=default
-    )
-    return map(dict, map(selector, iterable_of_dicts))
-
-
 class IterativeDictProcessing(MultiFunc):
     """Generate or transform a dict iteratively from a set of iterative rules (functions)
 
@@ -117,7 +62,7 @@ class IterativeDictProcessing(MultiFunc):
     intermediate variables to use in your formulas, but don't want those fields in
     your final data.
     To acheive this just filter out the unwanted fields.
-    You can use `select_fields` for this.
+    You can use `slink.util.select_fields` for this.
 
     """
 
@@ -140,12 +85,6 @@ class IterativeDictProcessing(MultiFunc):
             )
             # seed_dict[key] = call_forgivingly(func, **seed_dict)
         return seed_dict
-
-
-def mk_copies(d, n_copies_field):
-    n = d[n_copies_field]
-    for _ in range(n):
-        yield d.copy()
 
 
 import itertools
@@ -211,7 +150,7 @@ def _prepare_formulas(formulas):
 
 # Note: Doctests work in terminal but not in pycharm!
 def dict_generator(*formulas):
-    """helper function to make Expand objects.
+    """helper function to make DictChain objects.
     >>> from slink.sequences import Repeater
     >>> import itertools
     >>>
@@ -250,11 +189,12 @@ def dict_generator(*formulas):
     ... )
     >>> assert list(f())) == t
     """
-    return Expand(**dict(_prepare_formulas(formulas)))
+    return DictChain(**dict(_prepare_formulas(formulas)))
 
 
+# TODO: Shares big part with IterativeDictProcessing. Should we merge?
 # Note: Doctests work in terminal but not in pycharm!
-class Expand(MultiFunc):
+class DictChain(MultiFunc):
     """Make objects that generate schemaed and formulaed dicts with repetition
 
     >>> from slink.sequences import Repeater
@@ -264,14 +204,14 @@ class Expand(MultiFunc):
     >>> def count():
     ...     return next(counter)
     ...
-    >>> f = Expand(
+    >>> f = DictChain(
     ...     x=lambda: 7,
     ...     _1=Repeater(3),
     ... )
     >>> list(f())
     [{'x': 7}, {'x': 7}, {'x': 7}]
     >>>
-    >>> f = Expand(
+    >>> f = DictChain(
     ...     x=lambda: 7,
     ...     _1=Repeater(3),
     ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
@@ -280,7 +220,7 @@ class Expand(MultiFunc):
     [{'x': 7, 'y': 0}, {'x': 7, 'y': 1}, {'x': 7, 'y': 2}]
     >>>
     >>>
-    >>> f = Expand(
+    >>> f = DictChain(
     ...     x=lambda: 7,
     ...     _1=Repeater(3),
     ...     y=lambda: next(counter),  # will return 3, then 4, then 5,....
@@ -290,7 +230,7 @@ class Expand(MultiFunc):
     [{'x': 7, 'y': 3, 'z': 21}, {'x': 7, 'y': 4, 'z': 28}, {'x': 7, 'y': 5, 'z': 35}]
     >>>
     >>>
-    >>> f = Expand(
+    >>> f = DictChain(
     ...     x=lambda: 7,
     ...     _1=Repeater(3),
     ...     y=lambda: next(counter),  # will return 6, then 7, then 8,...
@@ -324,7 +264,7 @@ class Expand(MultiFunc):
         # get the first (name, func) pair
         if len(self) > 0:
             (name, func), *remaining = self.items()
-            next_repeater = Expand(**dict(remaining))
+            next_repeater = DictChain(**dict(remaining))
             if isinstance(func, Repeater):
                 repeater = func
                 yield from map(next_repeater, repeater(seed_dict, seed_dict))
