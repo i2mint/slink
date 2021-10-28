@@ -151,15 +151,14 @@ def _prepare_formulas(formulas):
 # Note: Doctests work in terminal but not in pycharm!
 def dict_generator(*formulas):
     """helper function to make DictChain objects.
-    >>> from slink.sequences import Repeater
     >>> import itertools
-    >>>
     >>> counter = itertools.count()
     >>> f = dict_generator(dict(
     ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
     ...     _1=Repeater(3),
     ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
     ...     z=lambda x, y: x * y),
+    ...     1
     ... )
     >>> list(f())
     [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
@@ -178,16 +177,16 @@ def dict_generator(*formulas):
     {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 1, 'z': 7},
     {'x': 7, 'y': 2, 'z': 14}, {'x': 7, 'y': 2, 'z': 14}]
 
-    Equivelently,
+    Equivalently,
 
     >>> counter = itertools.count()
-    >>> f = dict_generator(dict(
+    >>> f = dict_generator(
     ...     dict(x=7),
     ...     3,  # will be replaced with Repeater(3)
     ...     dict(y=lambda: next(counter), z=lambda x, y: x * y),
     ...     2  # will be replaced with Repeater(2)
     ... )
-    >>> assert list(f())) == t
+    >>> assert list(f()) == t
     """
     return DictChain(**dict(_prepare_formulas(formulas)))
 
@@ -197,7 +196,6 @@ def dict_generator(*formulas):
 class DictChain(MultiFunc):
     """Make objects that generate schemaed and formulaed dicts with repetition
 
-    >>> from slink.sequences import Repeater
     >>> import itertools
     >>>
     >>> counter = itertools.count()
