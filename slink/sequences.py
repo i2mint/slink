@@ -7,7 +7,7 @@ import random
 import copy
 from dataclasses import dataclass
 
-from lined import CommandIter
+from lined import CommandIter  # TODO: Only dependency on lined. Consider copying.
 from i2 import MultiFunc, Sig
 
 
@@ -66,8 +66,8 @@ class IterativeDictProcessing(MultiFunc):
 
     """
 
-    def __init__(self, **unnamed_funcs):
-        super().__init__(**unnamed_funcs)
+    def __init__(self, **named_funcs):
+        super().__init__(**named_funcs)
         self.sigs = {name: Sig(func) for name, func in self.items()}
 
     def __call__(self, seed_dict=None, preproc=copy.copy):
@@ -83,20 +83,19 @@ class IterativeDictProcessing(MultiFunc):
             seed_dict[assign_to_name] = _call_from_dict(
                 seed_dict, func, self.sigs[assign_to_name]
             )
-            # seed_dict[key] = call_forgivingly(func, **seed_dict)
         return seed_dict
 
 
 import itertools
 from typing import Generator
+from typing import NewType, Tuple, Callable, Union
 
 
-def flatten_generators_recursively(x: Generator):
-    for xi in x:
-        if isinstance(xi, Generator):
-            yield from flatten_generators_recursively(xi)
-        else:
-            yield xi
+def new_type(name, typ, doc=None):
+    t = NewType(name, type)
+    if doc:
+        t.__doc__ = doc
+    return t
 
 
 @dataclass
@@ -116,6 +115,25 @@ class Repeater:
         else:
             n_repetitions = self.n_repetitions
         return itertools.repeat(obj, n_repetitions)
+
+
+# TODO: Integrate these types and make DictChain more explicit in it's interface,
+#   leaving the dict_generator have more flexible argument handling.
+# TODO: Formulas is almost what IterativeDictProcessing is now. Merge.
+Identifier = new_type('Identifier', str)  # str.isidentifier
+Formula = new_type('Formula', Tuple[Identifier, Callable])
+Formulas = new_type('Formulas', Tuple[Formula])
+FormulaSpec = new_type('FormulaSpec', Union[Formula, dict])
+RepeaterSpec = new_type('RepeaterSpec', Union[Repeater, int, str])
+Step = new_type('Step', Union[Formulas, Repeater])
+
+
+def flatten_generators_recursively(x: Generator):
+    for xi in x:
+        if isinstance(xi, Generator):
+            yield from flatten_generators_recursively(xi)
+        else:
+            yield xi
 
 
 @dataclass
@@ -148,7 +166,6 @@ def _prepare_formulas(formulas):
             )
 
 
-# Note: Doctests work in terminal but not in pycharm!
 def dict_generator(*formulas):
     """helper function to make DictChain objects.
     >>> import itertools
@@ -192,7 +209,6 @@ def dict_generator(*formulas):
 
 
 # TODO: Shares big part with IterativeDictProcessing. Should we merge?
-# Note: Doctests work in terminal but not in pycharm!
 class DictChain(MultiFunc):
     """Make objects that generate schemaed and formulaed dicts with repetition
 
