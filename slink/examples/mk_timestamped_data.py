@@ -9,8 +9,8 @@ from lined import Line, LineParametrized, iterize
 """
  a, b...  ──▶  wf_for(a), wf_for(b)...
 """
-cat_map = {"a": [1, 2, 3], "b": [4, 5, 6]}
-src = "aabbaab"
+cat_map = {'a': [1, 2, 3], 'b': [4, 5, 6]}
+src = 'aabbaab'
 
 
 class CatCreek(Creek):
@@ -100,6 +100,7 @@ def test_func_to_creek():
 
     assert list(func_to_creek(double)(stream)) == [2, 4, 6]
 
+
 test_func_to_creek()
 
 # ---------------------------------------------------------------------------------------
@@ -111,7 +112,7 @@ def dict_to_func(d):
 
 
 g = dict_to_func(cat_map)
-assert g("a") == [1, 2, 3]
+assert g('a') == [1, 2, 3]
 
 
 def dict_as_param(func):
@@ -126,6 +127,7 @@ def test_dict_as_param():
     f = dict_as_param(func)
     assert f(dict(x=2, y=3)) == 5
     # but note that f isn't pickle-able
+
 
 test_dict_as_param()
 
@@ -142,8 +144,8 @@ def test_func_to_creek_and_dict_to_func(cat_map=cat_map, src=src):
         [4, 5, 6],
     ]
 
-test_func_to_creek_and_dict_to_func()
 
+test_func_to_creek_and_dict_to_func()
 
 
 # TW: I stopped here
@@ -166,15 +168,14 @@ def annot_timestamping(n_annot, start, end, wiggle=100):
     return wiggled
 
 
-
 cat_lin_map = {
-    "a": dict(start=1, stop=25, num=12),
-    "b": dict(start=0, stop=5, num=30),
+    'a': dict(start=1, stop=25, num=12),
+    'b': dict(start=0, stop=5, num=30),
 }
 
 # %%
 
-src = "aabbaab"
+src = 'aabbaab'
 stream = Line(dict_to_func, func_to_creek)(cat_lin_map)(src)
 
 # %%
@@ -193,7 +194,7 @@ list(p(stream))[:3]
 
 # %%
 
-dict_as_param(np.linspace)({"start": 1, "stop": 25, "num": 12})
+dict_as_param(np.linspace)({'start': 1, 'stop': 25, 'num': 12})
 
 
 # wiggle an array
@@ -218,7 +219,7 @@ def wiggle_by(wig_factor):
 
 
 # This replaces the function annot_timestamping
-src = "aabbaab"
+src = 'aabbaab'
 p1 = Line(dict_to_func, func_to_creek)(cat_lin_map)
 stream = p1(src)
 p2 = Line(dict_as_param, func_to_creek)(np.linspace)
