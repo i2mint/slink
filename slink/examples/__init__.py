@@ -9,12 +9,12 @@ from lined import iterize, Line, LineParametrized
 
 # ---------------------------------------------------------------------------------------
 # simple categorical map
-cat_map = {"a": [1, 2, 3], "b": [4, 5, 6]}
+cat_map = {'a': [1, 2, 3], 'b': [4, 5, 6]}
 get_list_for_cat = cat_map.__getitem__
 
 # to make the sequence function from this item func, you can do:
 iterized_get_list_for_cat = iterize(get_list_for_cat)
-assert list(iterized_get_list_for_cat("abaa")) == [
+assert list(iterized_get_list_for_cat('abaa')) == [
     [1, 2, 3],
     [4, 5, 6],
     [1, 2, 3],
@@ -30,7 +30,7 @@ def get_list_for_cat(category):
     return cat_map[category]
 
 
-seed_gen = RandomCategoricalGenerator(categories="ab")
+seed_gen = RandomCategoricalGenerator(categories='ab')
 
 g = Line(seed_gen, iterize(get_list_for_cat), list, lambda x: x)
 g(n=5)
@@ -39,8 +39,8 @@ g(n=5)
 # ---------------------------------------------------------------------------------------
 # categorical seeds generating segments from normal distributions
 cat_2_parms_map = {
-    "a": dict(loc=5, scale=0.5, size=3),
-    "b": dict(loc=10, scale=0.3, size=2),
+    'a': dict(loc=5, scale=0.5, size=3),
+    'b': dict(loc=10, scale=0.3, size=2),
 }
 get_params_for_cat = cat_2_parms_map.__getitem__
 call_normal_rand_on_params = lambda params: np.random.normal(**params)
@@ -52,7 +52,7 @@ _cat_based_chunk_gen = Line(
     list,  # make the arrays into lists (because it's nicer for display)
 )
 cat_based_chunk_gen = iterize(_cat_based_chunk_gen)
-list(cat_based_chunk_gen("abaa"))
+list(cat_based_chunk_gen('abaa'))
 # Example: [[4, 5, 5], [9, 10], [5, 4, 4], [4, 5, 4]]
 
 # ---------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ _cat_based_chunk_gen = Line(
     list,  # make the arrays into lists (because it's nicer for display)
 )
 cat_based_chunk_gen = iterize(_cat_based_chunk_gen)
-list(cat_based_chunk_gen("abaa"))
+list(cat_based_chunk_gen('abaa'))
 # Example: [[4, 5, 4], [10, 9], [5, 5, 4], [5, 5, 5]]
 
 # ---------------------------------------------------------------------------------------
@@ -94,26 +94,20 @@ def get_spectr_from_number(num, spectr, norm_offset, norm_scale):
     return spectr * factor_to_conserve_sum
 
 
-list_of_ints = Line(
-    iterize(int),
-    list,
-)
+list_of_ints = Line(iterize(int), list,)
 
-lists_of_list_of_ints = Line(
-    iterize(list_of_ints),
-    list,
-)
+lists_of_list_of_ints = Line(iterize(list_of_ints), list,)
 
 
 _num_based_wf_gen = LineParametrized(
     (
-        "get_spectr",
+        'get_spectr',
         partial(
             get_spectr_from_number, spectr=[400, 900, 50], norm_offset=2, norm_scale=10
         ),
     ),
-    ("wf_to_spectr", np.fft.rfft),
-    ("normalize_rfft", lambda rfft_wf: np.abs(rfft_wf)),
+    ('wf_to_spectr', np.fft.rfft),
+    ('normalize_rfft', lambda rfft_wf: np.abs(rfft_wf)),
 )
 
 num_based_wf_gen = iterize(_num_based_wf_gen)

@@ -4,7 +4,7 @@ from slink.seed_functions import (
     RandomCategoricalGenerator,
     RandomStringGenerator,
     RandomDictGenerator,
-    RandomGenerator
+    RandomGenerator,
 )
 
 from slink.sequences import (
@@ -12,7 +12,7 @@ from slink.sequences import (
     Repeater,
     DictChain,
     dict_generator,
-    mk_monotone_sequence
+    mk_monotone_sequence,
 )
 
 from slink.util import (

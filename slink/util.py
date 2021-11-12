@@ -73,6 +73,7 @@ class GetFromIter:
     ```
 
     """
+
     iterator: Union[Iterable, Iterator]
 
     def __post_init__(self):

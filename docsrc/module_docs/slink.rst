@@ -1,0 +1,4 @@
+slink
+=====
+.. automodule:: slink
+   :members:
