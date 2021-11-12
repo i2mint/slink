@@ -1,4 +1,30 @@
-"""Tools to make sequences"""
+"""Tools to make sequences
+
+Highlights:
+
+>>> from slink.sequences import IterativeDictProcessing
+>>> f = IterativeDictProcessing(
+...     phase=lambda session: session * 10,
+...     something_dependent=lambda session, phase: session + phase,
+...     something_independent=lambda: 'hi'
+... )
+>>> f({'session': 2})
+{'session': 2, 'phase': 20, 'something_dependent': 22, 'something_independent': 'hi'}
+
+>>> from slink.sequences import dict_generator
+>>> import itertools
+>>> counter = itertools.count()
+>>> f = dict_generator(dict(
+...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
+...     _1=Repeater(3),
+...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
+...     z=lambda x, y: x * y),
+...     1
+... )
+>>> list(f())
+[{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
+
+"""
 
 from itertools import accumulate
 from functools import partial
@@ -9,6 +35,129 @@ from dataclasses import dataclass
 
 from lined import CommandIter  # TODO: Only dependency on lined. Consider copying.
 from i2 import MultiFunc, Sig
+
+
+def dict_generator(*formulas):
+    """helper function to make DictChain objects.
+    >>> import itertools
+    >>> counter = itertools.count()
+    >>> f = dict_generator(dict(
+    ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
+    ...     _1=Repeater(3),
+    ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
+    ...     z=lambda x, y: x * y),
+    ...     1
+    ... )
+    >>> list(f())
+    [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
+    >>>
+    >>> counter = itertools.count()
+    >>> f = dict_generator(dict(
+    ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
+    ...     _1=Repeater(3),
+    ...     y=lambda: next(counter),  # will return 3, then 4, then 5,...
+    ...     z=lambda x, y: x * y),
+    ...     2  # will be replaced with Repeater(2)
+    ... )
+    >>> t = list(f())
+    >>> t  # doctest: +NORMALIZE_WHITESPACE
+    [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 0, 'z': 0},
+    {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 1, 'z': 7},
+    {'x': 7, 'y': 2, 'z': 14}, {'x': 7, 'y': 2, 'z': 14}]
+
+    Equivalently,
+
+    >>> counter = itertools.count()
+    >>> f = dict_generator(
+    ...     dict(x=7),
+    ...     3,  # will be replaced with Repeater(3)
+    ...     dict(y=lambda: next(counter), z=lambda x, y: x * y),
+    ...     2  # will be replaced with Repeater(2)
+    ... )
+    >>> assert list(f()) == t
+    """
+    return DictChain(**dict(_prepare_formulas(formulas)))
+
+
+# TODO: Shares big part with IterativeDictProcessing. Should we merge?
+class DictChain(MultiFunc):
+    """Make objects that generate schemaed and formulaed dicts with repetition
+
+    >>> import itertools
+    >>>
+    >>> counter = itertools.count()
+    >>> def count():
+    ...     return next(counter)
+    ...
+    >>> f = DictChain(
+    ...     x=lambda: 7,
+    ...     _1=Repeater(3),
+    ... )
+    >>> list(f())
+    [{'x': 7}, {'x': 7}, {'x': 7}]
+    >>>
+    >>> f = DictChain(
+    ...     x=lambda: 7,
+    ...     _1=Repeater(3),
+    ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
+    ... )
+    >>> list(f())
+    [{'x': 7, 'y': 0}, {'x': 7, 'y': 1}, {'x': 7, 'y': 2}]
+    >>>
+    >>>
+    >>> f = DictChain(
+    ...     x=lambda: 7,
+    ...     _1=Repeater(3),
+    ...     y=lambda: next(counter),  # will return 3, then 4, then 5,....
+    ...     z=lambda x, y: x * y,
+    ... )
+    >>> list(f())
+    [{'x': 7, 'y': 3, 'z': 21}, {'x': 7, 'y': 4, 'z': 28}, {'x': 7, 'y': 5, 'z': 35}]
+    >>>
+    >>>
+    >>> f = DictChain(
+    ...     x=lambda: 7,
+    ...     _1=Repeater(3),
+    ...     y=lambda: next(counter),  # will return 6, then 7, then 8,...
+    ...     z=lambda x, y: x * y,
+    ...     _2=Repeater(2)
+    ... )
+    >>> list(f())  # doctest: +NORMALIZE_WHITESPACE
+    [{'x': 7, 'y': 6, 'z': 42}, {'x': 7, 'y': 6, 'z': 42},
+    {'x': 7, 'y': 7, 'z': 49}, {'x': 7, 'y': 7, 'z': 49},
+    {'x': 7, 'y': 8, 'z': 56}, {'x': 7, 'y': 8, 'z': 56}]
+    """
+
+    def __init__(self, **unnamed_funcs):
+        super().__init__(**unnamed_funcs)
+        self.sigs = {name: Sig(func) for name, func in self.items()}
+
+    def __call__(self, seed_dict=None, preproc=copy.copy):
+        # return map(next, self._all_calls(seed_dict, preproc))
+        return flatten_generators_recursively(self._call_(seed_dict, preproc))
+
+    def _call_(self, seed_dict=None, preproc=copy.copy):
+        if seed_dict is None:
+            seed_dict = dict()
+        elif callable(seed_dict):
+            seed_dict_factory = seed_dict
+            seed_dict = seed_dict_factory()
+        if preproc:  # should we
+            seed_dict = preproc(seed_dict)
+        # assert isinstance(seed_dict, dict)
+
+        # get the first (name, func) pair
+        if len(self) > 0:
+            (name, func), *remaining = self.items()
+            next_repeater = DictChain(**dict(remaining))
+            if isinstance(func, Repeater):
+                repeater = func
+                yield from map(next_repeater, repeater(seed_dict, seed_dict))
+            else:
+                seed_dict[name] = _call_from_dict(seed_dict, func, self.sigs[name])
+                yield from next_repeater(seed_dict, preproc)
+        else:
+            yield seed_dict
 
 
 def _call_from_dict(kwargs: dict, func: Callable, sig: Sig):
@@ -164,129 +313,6 @@ def _prepare_formulas(formulas):
             raise TypeError(
                 f'formulas should be dicts, Repeaters, ints or strings: ' f'{formula}'
             )
-
-
-def dict_generator(*formulas):
-    """helper function to make DictChain objects.
-    >>> import itertools
-    >>> counter = itertools.count()
-    >>> f = dict_generator(dict(
-    ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
-    ...     _1=Repeater(3),
-    ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
-    ...     z=lambda x, y: x * y),
-    ...     1
-    ... )
-    >>> list(f())
-    [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
-    >>>
-    >>> counter = itertools.count()
-    >>> f = dict_generator(dict(
-    ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
-    ...     _1=Repeater(3),
-    ...     y=lambda: next(counter),  # will return 3, then 4, then 5,...
-    ...     z=lambda x, y: x * y),
-    ...     2  # will be replaced with Repeater(2)
-    ... )
-    >>> t = list(f())
-    >>> t  # doctest: +NORMALIZE_WHITESPACE
-    [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 0, 'z': 0},
-    {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 1, 'z': 7},
-    {'x': 7, 'y': 2, 'z': 14}, {'x': 7, 'y': 2, 'z': 14}]
-
-    Equivalently,
-
-    >>> counter = itertools.count()
-    >>> f = dict_generator(
-    ...     dict(x=7),
-    ...     3,  # will be replaced with Repeater(3)
-    ...     dict(y=lambda: next(counter), z=lambda x, y: x * y),
-    ...     2  # will be replaced with Repeater(2)
-    ... )
-    >>> assert list(f()) == t
-    """
-    return DictChain(**dict(_prepare_formulas(formulas)))
-
-
-# TODO: Shares big part with IterativeDictProcessing. Should we merge?
-class DictChain(MultiFunc):
-    """Make objects that generate schemaed and formulaed dicts with repetition
-
-    >>> import itertools
-    >>>
-    >>> counter = itertools.count()
-    >>> def count():
-    ...     return next(counter)
-    ...
-    >>> f = DictChain(
-    ...     x=lambda: 7,
-    ...     _1=Repeater(3),
-    ... )
-    >>> list(f())
-    [{'x': 7}, {'x': 7}, {'x': 7}]
-    >>>
-    >>> f = DictChain(
-    ...     x=lambda: 7,
-    ...     _1=Repeater(3),
-    ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
-    ... )
-    >>> list(f())
-    [{'x': 7, 'y': 0}, {'x': 7, 'y': 1}, {'x': 7, 'y': 2}]
-    >>>
-    >>>
-    >>> f = DictChain(
-    ...     x=lambda: 7,
-    ...     _1=Repeater(3),
-    ...     y=lambda: next(counter),  # will return 3, then 4, then 5,....
-    ...     z=lambda x, y: x * y,
-    ... )
-    >>> list(f())
-    [{'x': 7, 'y': 3, 'z': 21}, {'x': 7, 'y': 4, 'z': 28}, {'x': 7, 'y': 5, 'z': 35}]
-    >>>
-    >>>
-    >>> f = DictChain(
-    ...     x=lambda: 7,
-    ...     _1=Repeater(3),
-    ...     y=lambda: next(counter),  # will return 6, then 7, then 8,...
-    ...     z=lambda x, y: x * y,
-    ...     _2=Repeater(2)
-    ... )
-    >>> list(f())  # doctest: +NORMALIZE_WHITESPACE
-    [{'x': 7, 'y': 6, 'z': 42}, {'x': 7, 'y': 6, 'z': 42},
-    {'x': 7, 'y': 7, 'z': 49}, {'x': 7, 'y': 7, 'z': 49},
-    {'x': 7, 'y': 8, 'z': 56}, {'x': 7, 'y': 8, 'z': 56}]
-    """
-
-    def __init__(self, **unnamed_funcs):
-        super().__init__(**unnamed_funcs)
-        self.sigs = {name: Sig(func) for name, func in self.items()}
-
-    def __call__(self, seed_dict=None, preproc=copy.copy):
-        # return map(next, self._all_calls(seed_dict, preproc))
-        return flatten_generators_recursively(self._call_(seed_dict, preproc))
-
-    def _call_(self, seed_dict=None, preproc=copy.copy):
-        if seed_dict is None:
-            seed_dict = dict()
-        elif callable(seed_dict):
-            seed_dict_factory = seed_dict
-            seed_dict = seed_dict_factory()
-        if preproc:  # should we
-            seed_dict = preproc(seed_dict)
-        # assert isinstance(seed_dict, dict)
-
-        # get the first (name, func) pair
-        if len(self) > 0:
-            (name, func), *remaining = self.items()
-            next_repeater = DictChain(**dict(remaining))
-            if isinstance(func, Repeater):
-                repeater = func
-                yield from map(next_repeater, repeater(seed_dict, seed_dict))
-            else:
-                seed_dict[name] = _call_from_dict(seed_dict, func, self.sigs[name])
-                yield from next_repeater(seed_dict, preproc)
-        else:
-            yield seed_dict
 
 
 def mk_monotone_sequence(delta_val_func=random.random, *args, start=0, **kwargs):
