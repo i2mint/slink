@@ -1,38 +1,76 @@
-
 # slink
 Generate sequences
 
 To install:	```pip install slink```
 
+## Highlights
+
+```python
+>>> from slink.sequences import IterativeDictProcessing
+>>> f = IterativeDictProcessing(
+...     phase=lambda session: session * 10,
+...     something_dependent=lambda session, phase: session + phase,
+...     something_independent=lambda: 'hi'
+... )
+>>> f({'session': 2})
+{'session': 2, 'phase': 20, 'something_dependent': 22, 'something_independent': 'hi'}
+```
+
+```python
+>>> from slink.sequences import dict_generator
+>>> import itertools
+>>> counter = itertools.count()
+>>> f = dict_generator(dict(
+...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
+...     _1=Repeater(3),
+...     y=lambda: next(counter),  # will return 0, then 1, then 2,...
+...     z=lambda x, y: x * y),
+...     1
+... )
+>>> list(f())
+[{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
+```
+
 
 # Objective
 
-This package offers tools for generating sequences. Finite ones like lists and arrays, or infinite ones like streams. 
+This package offers tools for generating sequences. 
+Finite ones like lists and arrays, or infinite ones like streams. 
 
-The items of the sequences can be anything and often one sequence produced will be used to produce another (see further design notes). 
-The target (i.e. final) sequence items would be samples of a signal (like sound, image, or other data from some sensor source) or typical time-series. 
+The items of the sequences can be anything and often one sequence produced 
+will be used to produce another (see further design notes). 
+The target (i.e. final) sequence items would be samples of a signal 
+(like sound, image, or other data from some sensor source) or typical time-series. 
 
-For starters, our main focus will be generating sound -- that is, servicing the [hum](https://github.com/otosense/hum) package. 
+For starters, our main focus will be generating sound -- that is, 
+servicing the [hum](https://github.com/otosense/hum) package. 
 
-Our main tools will be taken from [creek](https://github.com/i2mint/creek) and possibly [lined]()
+Our main tools will be taken from [creek](https://github.com/i2mint/creek) 
+and possibly [lined]()
 
 
 # Design
 
 Our running examples will be taken from audio production. 
-We'll use `wf` to denote a waveform object (usually a list or array of numbers -- a.k.a. samples or frames). 
+We'll use `wf` to denote a waveform object (usually a list or array of numbers 
+-- a.k.a. samples or frames). 
 
 To get a waveform, you specify some `params` (including, say, the kind, 
-or the actual function that the params should be called with to produce the result), 
+or the actual function that the params should be called with to produce 
+the result), 
 and you get a waveform `wf`.
 
 ![image](https://user-images.githubusercontent.com/1906276/129167933-b1cdba31-0e8c-46b9-b789-c89732d06ce3.png)
 
-This `wf` could be a fixed-size object like an array, or could be a source of unbounded amounts of data, 
-like a generator, a stream object, a or a `creek.InfiniteSeq` which gives you the array-like ability to slice (i.e. `wf[i:j]`). 
+This `wf` could be a fixed-size object like an array, or could be a source of 
+unbounded amounts of data, 
+like a generator, a stream object, a or a `creek.InfiniteSeq` which gives you 
+the array-like ability to slice (i.e. `wf[i:j]`). 
 
-The purpose of `slink` is to provide tools to get from params to this `wf`, or what ever the target sequence maybe. 
-The main means of doing so is through a chain of sequences each one being a function of the previous. 
+The purpose of `slink` is to provide tools to get from params to this `wf`, 
+or what ever the target sequence maybe. 
+The main means of doing so is through a chain of sequences each one being a 
+function of the previous. 
 This function could do things like...
 
 <img src="https://user-images.githubusercontent.com/1906276/129180811-c6f94159-8a9b-4f42-9f99-34607ade643d.png" alt="drawing" style="width:1200px"/>

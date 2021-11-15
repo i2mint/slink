@@ -1,4 +1,0 @@
-slink
-=====
-.. automodule:: slink
-   :members:
