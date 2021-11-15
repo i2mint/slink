@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slink.seed_functions &mdash; slink 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slink.sequences" href="sequences.html" />
+    <link rel="prev" title="slink.examples.mk_timestamped_data" href="examples/mk_timestamped_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slink
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slink.html">slink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">slink.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/mk_timestamped_data.html">slink.examples.mk_timestamped_data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slink.seed_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequences.html">slink.sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">slink.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_sequences.html">slink.tests.test_sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">slink.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slink</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slink.seed_functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slink/seed_functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slink.seed_functions">
+<span id="slink-seed-functions"></span><h1>slink.seed_functions<a class="headerlink" href="#module-slink.seed_functions" title="Permalink to this headline">¶</a></h1>
+<p>Seed functions are the functions that produce the first sequence of the pipeline
+of sequence transformations.</p>
+<p>They’re not the outer most layer:
+The outer-most layer contains the whole pipeline,
+and has as arguments any parameters that the steps of the pipeline might need.</p>
+<p>A seed functions is called repeatedly to produce either an item at a time (<cite>n=1</cite>),
+a chunk (<cite>n&gt;1</cite>), or an iterable (<cite>n=0</cite>) that may or may not be a finite one.</p>
+<dl class="py class">
+<dt id="slink.seed_functions.RandomCategoricalGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">slink.seed_functions.</code><code class="sig-name descname">RandomCategoricalGenerator</code><span class="sig-paren">(</span><em class="sig-param">categories: Sequence = (True</em>, <em class="sig-param">False)</em>, <em class="sig-param">chunk_container: Callable = &lt;class 'list'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/seed_functions.html#RandomCategoricalGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.seed_functions.RandomCategoricalGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate categorical data in a controlled random way</p>
+<p># TODO: See why this runs forever!!!
+# &gt;&gt;&gt; r = RandomCategoricalGenerator()
+# &gt;&gt;&gt; it = r(None)
+# &gt;&gt;&gt; assert r() in r.categories # True or False
+# &gt;&gt;&gt; assert r(n=1) in r.categories # same as r()
+# &gt;&gt;&gt; result = r(n=3)
+# &gt;&gt;&gt; assert isinstance(result, list)  # e.g. [False, True, False]
+# &gt;&gt;&gt; r = RandomCategoricalGenerator(chunk_container=tuple)
+# &gt;&gt;&gt; result = r(n=3)
+# &gt;&gt;&gt; assert isinstance(result, tuple)  # e.g. (False, True, False)
+# &gt;&gt;&gt; result = itertools.islice(r(None), 0, 4)
+# &gt;&gt;&gt; assert set(result).issubset(r.categories)</p>
+<dl class="py attribute">
+<dt id="slink.seed_functions.RandomCategoricalGenerator.chunk_container">
+<code class="sig-name descname">chunk_container</code><a class="headerlink" href="#slink.seed_functions.RandomCategoricalGenerator.chunk_container" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">builtins.list</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.seed_functions.RandomDictGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">slink.seed_functions.</code><code class="sig-name descname">RandomDictGenerator</code><span class="sig-paren">(</span><em class="sig-param">gen_for_field: Union[Dict[str, Callable[[], Any]], Iterable[Tuple[str, Callable[[], Any]]]] = (('rpm', &lt;lined.tools.Command object&gt;), ('temperature', &lt;lined.tools.Command object&gt;), ('id', &lt;lined.tools.Command object&gt;), ('kind', RandomCategoricalGenerator(categories=[True, False, None], chunk_container=&lt;class 'list'&gt;))), chunk_container: Callable = &lt;class 'list'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/seed_functions.html#RandomDictGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.seed_functions.RandomDictGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixed-schema dict generator.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lined</span> <span class="kn">import</span> <span class="n">Command</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rand_gen</span> <span class="o">=</span> <span class="n">RandomDictGenerator</span><span class="p">(</span><span class="n">gen_for_field</span><span class="o">=</span><span class="p">(</span>
+<span class="gp">... </span><span class="p">(</span><span class="s1">&#39;rpm&#39;</span><span class="p">,</span> <span class="n">Command</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="n">Command</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">Command</span><span class="p">(</span><span class="n">rand_string</span><span class="p">,</span> <span class="n">str_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">alphabet</span><span class="o">=</span><span class="s1">&#39;0123456789abcdef&#39;</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">(</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">RandomCategoricalGenerator</span><span class="p">(</span><span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">]))</span>
+<span class="gp">... </span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">rand_gen</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>  
+<span class="go">{&#39;rpm&#39;: 172.58455409094074, &#39;temperature&#39;: 21, &#39;id&#39;: &#39;51a14&#39;, &#39;kind&#39;: True}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;rpm&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You can also ask for several at once, by default, returned in a list.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rand_gen</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  
+<span class="go">[{&#39;rpm&#39;: 275.35599992556627, &#39;temperature&#39;: 21, &#39;id&#39;: &#39;509&#39;, &#39;kind&#39;: True},</span>
+<span class="go">{&#39;rpm&#39;: 378.8770605317944, &#39;temperature&#39;: 23, &#39;id&#39;: &#39;5657a&#39;, &#39;kind&#39;: None},</span>
+<span class="go">{&#39;rpm&#39;: 826.381460898361, &#39;temperature&#39;: 23, &#39;id&#39;: &#39;4a53d&#39;, &#39;kind&#39;: False}]</span>
+</pre></div>
+</div>
+<p>rand_gen is also an (infinite) iterable:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rand_gen</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">break</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;rpm&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You can ask for an iterator with a limited number of elements.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">rand_gen</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rand_gen</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;rpm&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;kind&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt id="slink.seed_functions.RandomDictGenerator.chunk_container">
+<code class="sig-name descname">chunk_container</code><a class="headerlink" href="#slink.seed_functions.RandomDictGenerator.chunk_container" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">builtins.list</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.seed_functions.RandomGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">slink.seed_functions.</code><code class="sig-name descname">RandomGenerator</code><span class="sig-paren">(</span><em class="sig-param">random_gen: Callable[[], Any], chunk_container: Callable = &lt;class 'list'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/seed_functions.html#RandomGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.seed_functions.RandomGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt id="slink.seed_functions.RandomGenerator.chunk_container">
+<code class="sig-name descname">chunk_container</code><a class="headerlink" href="#slink.seed_functions.RandomGenerator.chunk_container" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">builtins.list</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.seed_functions.RandomStringGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">slink.seed_functions.</code><code class="sig-name descname">RandomStringGenerator</code><span class="sig-paren">(</span><em class="sig-param">str_size: Union[int, Tuple[int, int]] = (1, 9), alphabet: Collection = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', joiner: Callable[[Iterable], str] = &lt;built-in method join of str object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/seed_functions.html#RandomStringGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.seed_functions.RandomStringGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random string generator</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">RandomStringGenerator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">gen</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>  
+<span class="go">&#39;CmwRB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">RandomStringGenerator</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">)(</span><span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>  
+<span class="go">[&#39;bbb&#39;, &#39;bba&#39;, &#39;bab&#39;, &#39;abb&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">4</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="slink.seed_functions.RandomStringGenerator.joiner">
+<code class="sig-name descname">joiner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slink.seed_functions.RandomStringGenerator.joiner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate any number of strings.</p>
+<p>The string whose method is called is inserted in between each given string.
+The result is returned as a new string.</p>
+<p>Example: ‘.’.join([‘ab’, ‘pq’, ‘rs’]) -&gt; ‘ab.pq.rs’</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.seed_functions.RandomTupleGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">slink.seed_functions.</code><code class="sig-name descname">RandomTupleGenerator</code><span class="sig-paren">(</span><em class="sig-param">gen_for_field: Union[Dict[str, Callable[[], Any]], Iterable[Tuple[str, Callable[[], Any]]]] = (('rpm', &lt;lined.tools.Command object&gt;), ('temperature', &lt;lined.tools.Command object&gt;), ('id', &lt;lined.tools.Command object&gt;), ('kind', RandomCategoricalGenerator(categories=[True, False, None], chunk_container=&lt;class 'list'&gt;))), chunk_container: Callable = &lt;class 'list'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/seed_functions.html#RandomTupleGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.seed_functions.RandomTupleGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate fixed-schema tuples (of numericals or tuples)
+Can be used to generate other fixed-schema objects (dict, custom classes, etc.)</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples/mk_timestamped_data.html" class="btn btn-neutral float-left" title="slink.examples.mk_timestamped_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sequences.html" class="btn btn-neutral float-right" title="slink.sequences" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slink.sequences &mdash; slink 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slink
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink.html">slink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/examples.html">slink.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/examples/mk_timestamped_data.html">slink.examples.mk_timestamped_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/seed_functions.html">slink.seed_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/sequences.html">slink.sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/tests.html">slink.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/tests/test_sequences.html">slink.tests.test_sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/util.html">slink.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slink</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slink.sequences</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slink.sequences</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tools to make sequences</span>
+
+<span class="sd">Highlights:</span>
+
+<span class="sd">&gt;&gt;&gt; from slink.sequences import IterativeDictProcessing</span>
+<span class="sd">&gt;&gt;&gt; f = IterativeDictProcessing(</span>
+<span class="sd">...     phase=lambda session: session * 10,</span>
+<span class="sd">...     something_dependent=lambda session, phase: session + phase,</span>
+<span class="sd">...     something_independent=lambda: &#39;hi&#39;</span>
+<span class="sd">... )</span>
+<span class="sd">&gt;&gt;&gt; f({&#39;session&#39;: 2})</span>
+<span class="sd">{&#39;session&#39;: 2, &#39;phase&#39;: 20, &#39;something_dependent&#39;: 22, &#39;something_independent&#39;: &#39;hi&#39;}</span>
+
+<span class="sd">&gt;&gt;&gt; from slink.sequences import dict_generator</span>
+<span class="sd">&gt;&gt;&gt; import itertools</span>
+<span class="sd">&gt;&gt;&gt; counter = itertools.count()</span>
+<span class="sd">&gt;&gt;&gt; f = dict_generator(dict(</span>
+<span class="sd">...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7</span>
+<span class="sd">...     _1=Repeater(3),</span>
+<span class="sd">...     y=lambda: next(counter),  # will return 0, then 1, then 2,...</span>
+<span class="sd">...     z=lambda x, y: x * y),</span>
+<span class="sd">...     1</span>
+<span class="sd">... )</span>
+<span class="sd">&gt;&gt;&gt; list(f())</span>
+<span class="sd">[{&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7}, {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}]</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">accumulate</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">from</span> <span class="nn">lined</span> <span class="kn">import</span> <span class="n">CommandIter</span>  <span class="c1"># TODO: Only dependency on lined. Consider copying.</span>
+<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">MultiFunc</span><span class="p">,</span> <span class="n">Sig</span>
+
+
+<div class="viewcode-block" id="dict_generator"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.dict_generator">[docs]</a><span class="k">def</span> <span class="nf">dict_generator</span><span class="p">(</span><span class="o">*</span><span class="n">formulas</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;helper function to make DictChain objects.</span>
+<span class="sd">    &gt;&gt;&gt; import itertools</span>
+<span class="sd">    &gt;&gt;&gt; counter = itertools.count()</span>
+<span class="sd">    &gt;&gt;&gt; f = dict_generator(dict(</span>
+<span class="sd">    ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7</span>
+<span class="sd">    ...     _1=Repeater(3),</span>
+<span class="sd">    ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...</span>
+<span class="sd">    ...     z=lambda x, y: x * y),</span>
+<span class="sd">    ...     1</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; list(f())</span>
+<span class="sd">    [{&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7}, {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; counter = itertools.count()</span>
+<span class="sd">    &gt;&gt;&gt; f = dict_generator(dict(</span>
+<span class="sd">    ...     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7</span>
+<span class="sd">    ...     _1=Repeater(3),</span>
+<span class="sd">    ...     y=lambda: next(counter),  # will return 3, then 4, then 5,...</span>
+<span class="sd">    ...     z=lambda x, y: x * y),</span>
+<span class="sd">    ...     2  # will be replaced with Repeater(2)</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; t = list(f())</span>
+<span class="sd">    &gt;&gt;&gt; t  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">    [{&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0},</span>
+<span class="sd">    {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7}, {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7},</span>
+<span class="sd">    {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}, {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}]</span>
+
+<span class="sd">    Equivalently,</span>
+
+<span class="sd">    &gt;&gt;&gt; counter = itertools.count()</span>
+<span class="sd">    &gt;&gt;&gt; f = dict_generator(</span>
+<span class="sd">    ...     dict(x=7),</span>
+<span class="sd">    ...     3,  # will be replaced with Repeater(3)</span>
+<span class="sd">    ...     dict(y=lambda: next(counter), z=lambda x, y: x * y),</span>
+<span class="sd">    ...     2  # will be replaced with Repeater(2)</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; assert list(f()) == t</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DictChain</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">_prepare_formulas</span><span class="p">(</span><span class="n">formulas</span><span class="p">)))</span></div>
+
+
+<span class="c1"># TODO: Shares big part with IterativeDictProcessing. Should we merge?</span>
+<div class="viewcode-block" id="DictChain"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.DictChain">[docs]</a><span class="k">class</span> <span class="nc">DictChain</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make objects that generate schemaed and formulaed dicts with repetition</span>
+
+<span class="sd">    &gt;&gt;&gt; import itertools</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; counter = itertools.count()</span>
+<span class="sd">    &gt;&gt;&gt; def count():</span>
+<span class="sd">    ...     return next(counter)</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; f = DictChain(</span>
+<span class="sd">    ...     x=lambda: 7,</span>
+<span class="sd">    ...     _1=Repeater(3),</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; list(f())</span>
+<span class="sd">    [{&#39;x&#39;: 7}, {&#39;x&#39;: 7}, {&#39;x&#39;: 7}]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; f = DictChain(</span>
+<span class="sd">    ...     x=lambda: 7,</span>
+<span class="sd">    ...     _1=Repeater(3),</span>
+<span class="sd">    ...     y=lambda: next(counter),  # will return 0, then 1, then 2,...</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; list(f())</span>
+<span class="sd">    [{&#39;x&#39;: 7, &#39;y&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1}, {&#39;x&#39;: 7, &#39;y&#39;: 2}]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; f = DictChain(</span>
+<span class="sd">    ...     x=lambda: 7,</span>
+<span class="sd">    ...     _1=Repeater(3),</span>
+<span class="sd">    ...     y=lambda: next(counter),  # will return 3, then 4, then 5,....</span>
+<span class="sd">    ...     z=lambda x, y: x * y,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; list(f())</span>
+<span class="sd">    [{&#39;x&#39;: 7, &#39;y&#39;: 3, &#39;z&#39;: 21}, {&#39;x&#39;: 7, &#39;y&#39;: 4, &#39;z&#39;: 28}, {&#39;x&#39;: 7, &#39;y&#39;: 5, &#39;z&#39;: 35}]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; f = DictChain(</span>
+<span class="sd">    ...     x=lambda: 7,</span>
+<span class="sd">    ...     _1=Repeater(3),</span>
+<span class="sd">    ...     y=lambda: next(counter),  # will return 6, then 7, then 8,...</span>
+<span class="sd">    ...     z=lambda x, y: x * y,</span>
+<span class="sd">    ...     _2=Repeater(2)</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; list(f())  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">    [{&#39;x&#39;: 7, &#39;y&#39;: 6, &#39;z&#39;: 42}, {&#39;x&#39;: 7, &#39;y&#39;: 6, &#39;z&#39;: 42},</span>
+<span class="sd">    {&#39;x&#39;: 7, &#39;y&#39;: 7, &#39;z&#39;: 49}, {&#39;x&#39;: 7, &#39;y&#39;: 7, &#39;z&#39;: 49},</span>
+<span class="sd">    {&#39;x&#39;: 7, &#39;y&#39;: 8, &#39;z&#39;: 56}, {&#39;x&#39;: 7, &#39;y&#39;: 8, &#39;z&#39;: 56}]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">unnamed_funcs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">unnamed_funcs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preproc</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">):</span>
+        <span class="c1"># return map(next, self._all_calls(seed_dict, preproc))</span>
+        <span class="k">return</span> <span class="n">flatten_generators_recursively</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call_</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">,</span> <span class="n">preproc</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preproc</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">seed_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">):</span>
+            <span class="n">seed_dict_factory</span> <span class="o">=</span> <span class="n">seed_dict</span>
+            <span class="n">seed_dict</span> <span class="o">=</span> <span class="n">seed_dict_factory</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">preproc</span><span class="p">:</span>  <span class="c1"># should we</span>
+            <span class="n">seed_dict</span> <span class="o">=</span> <span class="n">preproc</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">)</span>
+        <span class="c1"># assert isinstance(seed_dict, dict)</span>
+
+        <span class="c1"># get the first (name, func) pair</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">),</span> <span class="o">*</span><span class="n">remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="n">next_repeater</span> <span class="o">=</span> <span class="n">DictChain</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">remaining</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">Repeater</span><span class="p">):</span>
+                <span class="n">repeater</span> <span class="o">=</span> <span class="n">func</span>
+                <span class="k">yield from</span> <span class="nb">map</span><span class="p">(</span><span class="n">next_repeater</span><span class="p">,</span> <span class="n">repeater</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">,</span> <span class="n">seed_dict</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seed_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_call_from_dict</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="k">yield from</span> <span class="n">next_repeater</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">,</span> <span class="n">preproc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">seed_dict</span></div>
+
+
+<span class="k">def</span> <span class="nf">_call_from_dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="n">Sig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A i2.call_forgivingly optimized for our purpose</span>
+
+<span class="sd">    The sig argument needs to be the Sig(func) to work correctly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">args_and_kwargs_from_kwargs</span><span class="p">(</span>
+        <span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">allow_excess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ignore_kind</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">allow_partial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">apply_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="IterativeDictProcessing"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.IterativeDictProcessing">[docs]</a><span class="k">class</span> <span class="nc">IterativeDictProcessing</span><span class="p">(</span><span class="n">MultiFunc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate or transform a dict iteratively from a set of iterative rules (functions)</span>
+
+<span class="sd">    This is useful when you need to generate dicts (or any other vector --</span>
+<span class="sd">    i.e fixed-width schema-ed tuple/list/etc) that have correlated values.</span>
+
+<span class="sd">    Deterministic example with specified input:</span>
+
+<span class="sd">    &gt;&gt;&gt; f = IterativeDictProcessing(</span>
+<span class="sd">    ...     phase=lambda session: session * 10,</span>
+<span class="sd">    ...     something_dependent=lambda session, phase: session + phase,</span>
+<span class="sd">    ...     something_independent=lambda: &#39;hi&#39;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; f({&#39;session&#39;: 2})</span>
+<span class="sd">    {&#39;session&#39;: 2, &#39;phase&#39;: 20, &#39;something_dependent&#39;: 22, &#39;something_independent&#39;: &#39;hi&#39;}</span>
+
+<span class="sd">    Non-deterministic example with empty input.</span>
+<span class="sd">    Here we demonstrate that the original input that seeds the iterative generation</span>
+<span class="sd">    can be given by a function that will generate a random input.</span>
+
+<span class="sd">    &gt;&gt;&gt; import functools, random</span>
+<span class="sd">    &gt;&gt;&gt; f = IterativeDictProcessing(</span>
+<span class="sd">    ...     session=functools.partial(random.uniform, 2, 9),</span>
+<span class="sd">    ...     block=lambda session: session * 10,</span>
+<span class="sd">    ...     something_dependent=lambda session, block: session + block,</span>
+<span class="sd">    ...     something_independent=lambda: random.choice([True, False, None])</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; # f() is equivalent to specifying empty dict; f({}); or factory; f(dict)</span>
+<span class="sd">    &gt;&gt;&gt; f()  # doctest: +SKIP</span>
+<span class="sd">    {&#39;session&#39;: 8.673108499155791, &#39;block&#39;: 86.7310849915579,</span>
+<span class="sd">    &#39;something_dependent&#39;: 95.4041934907137, &#39;something_independent&#39;: False}</span>
+
+<span class="sd">    Note that, akin to working with a spreadsheet, sometimes you need to create</span>
+<span class="sd">    intermediate variables to use in your formulas, but don&#39;t want those fields in</span>
+<span class="sd">    your final data.</span>
+<span class="sd">    To acheive this just filter out the unwanted fields.</span>
+<span class="sd">    You can use `slink.util.select_fields` for this.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preproc</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">seed_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">):</span>
+            <span class="n">seed_dict_factory</span> <span class="o">=</span> <span class="n">seed_dict</span>
+            <span class="n">seed_dict</span> <span class="o">=</span> <span class="n">seed_dict_factory</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">preproc</span><span class="p">:</span>  <span class="c1"># should we</span>
+            <span class="n">seed_dict</span> <span class="o">=</span> <span class="n">preproc</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">assign_to_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">seed_dict</span><span class="p">[</span><span class="n">assign_to_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_call_from_dict</span><span class="p">(</span>
+                <span class="n">seed_dict</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span><span class="p">[</span><span class="n">assign_to_name</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">seed_dict</span></div>
+
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+
+
+<span class="k">def</span> <span class="nf">new_type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+    <span class="k">return</span> <span class="n">t</span>
+
+
+<div class="viewcode-block" id="Repeater"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.Repeater">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Repeater</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Helper class to define the repetition of an object based on a fixed number or</span>
+<span class="sd">    a number (unknown at the time of instantiation) that will be defined in a</span>
+<span class="sd">    seed_dict&quot;&quot;&quot;</span>
+
+    <span class="n">n_repetitions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">seed_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_repetitions</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># if n_repetitions is a string, it&#39;s a field; get the number_of_repetitions</span>
+            <span class="n">n_repetitions</span> <span class="o">=</span> <span class="p">(</span><span class="n">seed_dict</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_repetitions</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_repetitions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_repetitions</span><span class="si">}</span><span class="s1"> key not found in </span><span class="si">{</span><span class="n">seed_dict</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_repetitions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_repetitions</span>
+        <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">n_repetitions</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: Integrate these types and make DictChain more explicit in it&#39;s interface,</span>
+<span class="c1">#   leaving the dict_generator have more flexible argument handling.</span>
+<span class="c1"># TODO: Formulas is almost what IterativeDictProcessing is now. Merge.</span>
+<span class="n">Identifier</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="s1">&#39;Identifier&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>  <span class="c1"># str.isidentifier</span>
+<span class="n">Formula</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="s1">&#39;Formula&#39;</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Identifier</span><span class="p">,</span> <span class="n">Callable</span><span class="p">])</span>
+<span class="n">Formulas</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="s1">&#39;Formulas&#39;</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Formula</span><span class="p">])</span>
+<span class="n">FormulaSpec</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="s1">&#39;FormulaSpec&#39;</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Formula</span><span class="p">,</span> <span class="nb">dict</span><span class="p">])</span>
+<span class="n">RepeaterSpec</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="s1">&#39;RepeaterSpec&#39;</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Repeater</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
+<span class="n">Step</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="s1">&#39;Step&#39;</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Formulas</span><span class="p">,</span> <span class="n">Repeater</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">flatten_generators_recursively</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Generator</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">Generator</span><span class="p">):</span>
+            <span class="k">yield from</span> <span class="n">flatten_generators_recursively</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">xi</span>
+
+
+<div class="viewcode-block" id="ReturnObj"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.ReturnObj">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ReturnObj</span><span class="p">:</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span></div>
+
+
+<span class="k">def</span> <span class="nf">_prepare_formula_dict</span><span class="p">(</span><span class="n">formula_dict</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">formula_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">ReturnObj</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+
+
+<span class="k">def</span> <span class="nf">_prepare_formulas</span><span class="p">(</span><span class="n">formulas</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">formula</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">formulas</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">yield from</span> <span class="n">_prepare_formula_dict</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Repeater</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="sa">f</span><span class="s1">&#39;repeater_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">formula</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="k">yield</span> <span class="sa">f</span><span class="s1">&#39;repeater_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">Repeater</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;formulas should be dicts, Repeaters, ints or strings: &#39;</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">formula</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+
+
+<div class="viewcode-block" id="mk_monotone_sequence"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.mk_monotone_sequence">[docs]</a><span class="k">def</span> <span class="nf">mk_monotone_sequence</span><span class="p">(</span><span class="n">delta_val_func</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a monotone sequence of numbers by accumulating</span>
+
+<span class="sd">    &gt;&gt;&gt; from lined import Pipe</span>
+<span class="sd">    &gt;&gt;&gt; import itertools</span>
+<span class="sd">    &gt;&gt;&gt; get_slice = Pipe(itertools.islice, list)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; it = mk_monotone_sequence()</span>
+<span class="sd">    &gt;&gt;&gt; t = get_slice(it, 4)</span>
+<span class="sd">    &gt;&gt;&gt; assert len(t) == 4</span>
+<span class="sd">    &gt;&gt;&gt; assert t[0] == 0</span>
+<span class="sd">    &gt;&gt;&gt; t  # doctest: +SKIP</span>
+<span class="sd">    [0, 0.522353704156762, 0.9681615026643958, 1.0927423253813298]</span>
+<span class="sd">    &gt;&gt;&gt; it = mk_monotone_sequence(random.uniform, 10, 100, start=7)</span>
+<span class="sd">    &gt;&gt;&gt; t = get_slice(it, 3)</span>
+<span class="sd">    &gt;&gt;&gt; assert len(t) == 3</span>
+<span class="sd">    &gt;&gt;&gt; assert t[0] == 7</span>
+<span class="sd">    &gt;&gt;&gt; t  # doctest: +SKIP</span>
+<span class="sd">    [7, 62.808676729760556, 129.67231010126588]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">accumulate</span><span class="p">(</span><span class="n">CommandIter</span><span class="p">(</span><span class="n">delta_val_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">initial</span><span class="o">=</span><span class="n">start</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

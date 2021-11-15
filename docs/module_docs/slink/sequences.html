@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slink.sequences &mdash; slink 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slink.tests" href="tests.html" />
+    <link rel="prev" title="slink.seed_functions" href="seed_functions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slink
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slink.html">slink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">slink.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/mk_timestamped_data.html">slink.examples.mk_timestamped_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="seed_functions.html">slink.seed_functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slink.sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">slink.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_sequences.html">slink.tests.test_sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">slink.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slink</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slink.sequences</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slink/sequences.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slink.sequences">
+<span id="slink-sequences"></span><h1>slink.sequences<a class="headerlink" href="#module-slink.sequences" title="Permalink to this headline">¶</a></h1>
+<p>Tools to make sequences</p>
+<p>Highlights:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">slink.sequences</span> <span class="kn">import</span> <span class="n">IterativeDictProcessing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">IterativeDictProcessing</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">phase</span><span class="o">=</span><span class="k">lambda</span> <span class="n">session</span><span class="p">:</span> <span class="n">session</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">something_dependent</span><span class="o">=</span><span class="k">lambda</span> <span class="n">session</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">session</span> <span class="o">+</span> <span class="n">phase</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">something_independent</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;hi&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">({</span><span class="s1">&#39;session&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+<span class="go">{&#39;session&#39;: 2, &#39;phase&#39;: 20, &#39;something_dependent&#39;: 22, &#39;something_independent&#39;: &#39;hi&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">slink.sequences</span> <span class="kn">import</span> <span class="n">dict_generator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">dict_generator</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># will be replaced with ReturnObj(y), an equivalent of lambda: 7</span>
+<span class="gp">... </span>    <span class="n">_1</span><span class="o">=</span><span class="n">Repeater</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>  <span class="c1"># will return 0, then 1, then 2,...</span>
+<span class="gp">... </span>    <span class="n">z</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="mi">1</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
+<span class="go">[{&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7}, {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}]</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt id="slink.sequences.DictChain">
+<em class="property">class </em><code class="sig-prename descclassname">slink.sequences.</code><code class="sig-name descname">DictChain</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">unnamed_funcs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/sequences.html#DictChain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.sequences.DictChain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make objects that generate schemaed and formulaed dicts with repetition</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">count</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">DictChain</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">_1</span><span class="o">=</span><span class="n">Repeater</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
+<span class="go">[{&#39;x&#39;: 7}, {&#39;x&#39;: 7}, {&#39;x&#39;: 7}]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">DictChain</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">_1</span><span class="o">=</span><span class="n">Repeater</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>  <span class="c1"># will return 0, then 1, then 2,...</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
+<span class="go">[{&#39;x&#39;: 7, &#39;y&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1}, {&#39;x&#39;: 7, &#39;y&#39;: 2}]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">DictChain</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">_1</span><span class="o">=</span><span class="n">Repeater</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>  <span class="c1"># will return 3, then 4, then 5,....</span>
+<span class="gp">... </span>    <span class="n">z</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
+<span class="go">[{&#39;x&#39;: 7, &#39;y&#39;: 3, &#39;z&#39;: 21}, {&#39;x&#39;: 7, &#39;y&#39;: 4, &#39;z&#39;: 28}, {&#39;x&#39;: 7, &#39;y&#39;: 5, &#39;z&#39;: 35}]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">DictChain</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">_1</span><span class="o">=</span><span class="n">Repeater</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">y</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span>  <span class="c1"># will return 6, then 7, then 8,...</span>
+<span class="gp">... </span>    <span class="n">z</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">_2</span><span class="o">=</span><span class="n">Repeater</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>  
+<span class="go">[{&#39;x&#39;: 7, &#39;y&#39;: 6, &#39;z&#39;: 42}, {&#39;x&#39;: 7, &#39;y&#39;: 6, &#39;z&#39;: 42},</span>
+<span class="go">{&#39;x&#39;: 7, &#39;y&#39;: 7, &#39;z&#39;: 49}, {&#39;x&#39;: 7, &#39;y&#39;: 7, &#39;z&#39;: 49},</span>
+<span class="go">{&#39;x&#39;: 7, &#39;y&#39;: 8, &#39;z&#39;: 56}, {&#39;x&#39;: 7, &#39;y&#39;: 8, &#39;z&#39;: 56}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.sequences.IterativeDictProcessing">
+<em class="property">class </em><code class="sig-prename descclassname">slink.sequences.</code><code class="sig-name descname">IterativeDictProcessing</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">named_funcs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/sequences.html#IterativeDictProcessing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.sequences.IterativeDictProcessing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate or transform a dict iteratively from a set of iterative rules (functions)</p>
+<p>This is useful when you need to generate dicts (or any other vector –
+i.e fixed-width schema-ed tuple/list/etc) that have correlated values.</p>
+<p>Deterministic example with specified input:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">IterativeDictProcessing</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">phase</span><span class="o">=</span><span class="k">lambda</span> <span class="n">session</span><span class="p">:</span> <span class="n">session</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">something_dependent</span><span class="o">=</span><span class="k">lambda</span> <span class="n">session</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="n">session</span> <span class="o">+</span> <span class="n">phase</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">something_independent</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;hi&#39;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">({</span><span class="s1">&#39;session&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+<span class="go">{&#39;session&#39;: 2, &#39;phase&#39;: 20, &#39;something_dependent&#39;: 22, &#39;something_independent&#39;: &#39;hi&#39;}</span>
+</pre></div>
+</div>
+<p>Non-deterministic example with empty input.
+Here we demonstrate that the original input that seeds the iterative generation
+can be given by a function that will generate a random input.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">functools</span><span class="o">,</span> <span class="nn">random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">IterativeDictProcessing</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">session</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">block</span><span class="o">=</span><span class="k">lambda</span> <span class="n">session</span><span class="p">:</span> <span class="n">session</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">something_dependent</span><span class="o">=</span><span class="k">lambda</span> <span class="n">session</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">session</span> <span class="o">+</span> <span class="n">block</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">something_independent</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># f() is equivalent to specifying empty dict; f({}); or factory; f(dict)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">()</span>  
+<span class="go">{&#39;session&#39;: 8.673108499155791, &#39;block&#39;: 86.7310849915579,</span>
+<span class="go">&#39;something_dependent&#39;: 95.4041934907137, &#39;something_independent&#39;: False}</span>
+</pre></div>
+</div>
+<p>Note that, akin to working with a spreadsheet, sometimes you need to create
+intermediate variables to use in your formulas, but don’t want those fields in
+your final data.
+To acheive this just filter out the unwanted fields.
+You can use <cite>slink.util.select_fields</cite> for this.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.sequences.Repeater">
+<em class="property">class </em><code class="sig-prename descclassname">slink.sequences.</code><code class="sig-name descname">Repeater</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_repetitions</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/sequences.html#Repeater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.sequences.Repeater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper class to define the repetition of an object based on a fixed number or
+a number (unknown at the time of instantiation) that will be defined in a
+seed_dict</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="slink.sequences.ReturnObj">
+<em class="property">class </em><code class="sig-prename descclassname">slink.sequences.</code><code class="sig-name descname">ReturnObj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/sequences.html#ReturnObj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.sequences.ReturnObj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="slink.sequences.dict_generator">
+<code class="sig-prename descclassname">slink.sequences.</code><code class="sig-name descname">dict_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">formulas</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/sequences.html#dict_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.sequences.dict_generator" title="Permalink to this definition">¶</a></dt>
+<dd><p>helper function to make DictChain objects.
+&gt;&gt;&gt; import itertools
+&gt;&gt;&gt; counter = itertools.count()
+&gt;&gt;&gt; f = dict_generator(dict(
+…     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
+…     _1=Repeater(3),
+…     y=lambda: next(counter),  # will return 0, then 1, then 2,…
+…     z=lambda x, y: x * y),
+…     1
+… )
+&gt;&gt;&gt; list(f())
+[{‘x’: 7, ‘y’: 0, ‘z’: 0}, {‘x’: 7, ‘y’: 1, ‘z’: 7}, {‘x’: 7, ‘y’: 2, ‘z’: 14}]
+&gt;&gt;&gt;
+&gt;&gt;&gt; counter = itertools.count()
+&gt;&gt;&gt; f = dict_generator(dict(
+…     x=7,  # will be replaced with ReturnObj(y), an equivalent of lambda: 7
+…     _1=Repeater(3),
+…     y=lambda: next(counter),  # will return 3, then 4, then 5,…
+…     z=lambda x, y: x * y),
+…     2  # will be replaced with Repeater(2)
+… )
+&gt;&gt;&gt; t = list(f())
+&gt;&gt;&gt; t  # doctest: +NORMALIZE_WHITESPACE
+[{‘x’: 7, ‘y’: 0, ‘z’: 0}, {‘x’: 7, ‘y’: 0, ‘z’: 0},
+{‘x’: 7, ‘y’: 1, ‘z’: 7}, {‘x’: 7, ‘y’: 1, ‘z’: 7},
+{‘x’: 7, ‘y’: 2, ‘z’: 14}, {‘x’: 7, ‘y’: 2, ‘z’: 14}]</p>
+<p>Equivalently,</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">dict_generator</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="mi">3</span><span class="p">,</span>  <span class="c1"># will be replaced with Repeater(3)</span>
+<span class="gp">... </span>    <span class="nb">dict</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">),</span> <span class="n">z</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="mi">2</span>  <span class="c1"># will be replaced with Repeater(2)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="p">())</span> <span class="o">==</span> <span class="n">t</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slink.sequences.mk_monotone_sequence">
+<code class="sig-prename descclassname">slink.sequences.</code><code class="sig-name descname">mk_monotone_sequence</code><span class="sig-paren">(</span><em class="sig-param">delta_val_func=&lt;built-in method random of Random object&gt;</em>, <em class="sig-param">*args</em>, <em class="sig-param">start=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slink/sequences.html#mk_monotone_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slink.sequences.mk_monotone_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a monotone sequence of numbers by accumulating</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lined</span> <span class="kn">import</span> <span class="n">Pipe</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_slice</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">mk_monotone_sequence</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">get_slice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>  
+<span class="go">[0, 0.522353704156762, 0.9681615026643958, 1.0927423253813298]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">it</span> <span class="o">=</span> <span class="n">mk_monotone_sequence</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">get_slice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>  
+<span class="go">[7, 62.808676729760556, 129.67231010126588]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="seed_functions.html" class="btn btn-neutral float-left" title="slink.seed_functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.html" class="btn btn-neutral float-right" title="slink.tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

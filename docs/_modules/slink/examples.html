@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slink.examples &mdash; slink 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slink
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink.html">slink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/examples.html">slink.examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/examples/mk_timestamped_data.html">slink.examples.mk_timestamped_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/seed_functions.html">slink.seed_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/sequences.html">slink.sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/tests.html">slink.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/tests/test_sequences.html">slink.tests.test_sequences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slink/util.html">slink.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slink</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slink.examples</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slink.examples</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Examples and recipes&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">lined</span> <span class="kn">import</span> <span class="n">iterize</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span> <span class="n">LineParametrized</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># simple categorical map</span>
+<span class="n">cat_map</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]}</span>
+<span class="n">get_list_for_cat</span> <span class="o">=</span> <span class="n">cat_map</span><span class="o">.</span><span class="fm">__getitem__</span>
+
+<span class="c1"># to make the sequence function from this item func, you can do:</span>
+<span class="n">iterized_get_list_for_cat</span> <span class="o">=</span> <span class="n">iterize</span><span class="p">(</span><span class="n">get_list_for_cat</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterized_get_list_for_cat</span><span class="p">(</span><span class="s1">&#39;abaa&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="p">]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># simple categorical map with seed generator</span>
+<span class="kn">from</span> <span class="nn">slink.seed_functions</span> <span class="kn">import</span> <span class="n">RandomCategoricalGenerator</span>
+
+
+<span class="k">def</span> <span class="nf">get_list_for_cat</span><span class="p">(</span><span class="n">category</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cat_map</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
+
+
+<span class="n">seed_gen</span> <span class="o">=</span> <span class="n">RandomCategoricalGenerator</span><span class="p">(</span><span class="n">categories</span><span class="o">=</span><span class="s1">&#39;ab&#39;</span><span class="p">)</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">seed_gen</span><span class="p">,</span> <span class="n">iterize</span><span class="p">(</span><span class="n">get_list_for_cat</span><span class="p">),</span> <span class="nb">list</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">g</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># Example: [[4, 5, 6], [1, 2, 3], [1, 2, 3], [4, 5, 6], [4, 5, 6]]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># categorical seeds generating segments from normal distributions</span>
+<span class="n">cat_2_parms_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+    <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">get_params_for_cat</span> <span class="o">=</span> <span class="n">cat_2_parms_map</span><span class="o">.</span><span class="fm">__getitem__</span>
+<span class="n">call_normal_rand_on_params</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+<span class="n">_cat_based_chunk_gen</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span>
+    <span class="n">get_params_for_cat</span><span class="p">,</span>  <span class="c1"># get some params for a category</span>
+    <span class="n">call_normal_rand_on_params</span><span class="p">,</span>  <span class="c1"># draw from a normal distribution with those params</span>
+    <span class="n">iterize</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># cast the result to an int</span>
+    <span class="nb">list</span><span class="p">,</span>  <span class="c1"># make the arrays into lists (because it&#39;s nicer for display)</span>
+<span class="p">)</span>
+<span class="n">cat_based_chunk_gen</span> <span class="o">=</span> <span class="n">iterize</span><span class="p">(</span><span class="n">_cat_based_chunk_gen</span><span class="p">)</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">cat_based_chunk_gen</span><span class="p">(</span><span class="s1">&#39;abaa&#39;</span><span class="p">))</span>
+<span class="c1"># Example: [[4, 5, 5], [9, 10], [5, 4, 4], [4, 5, 4]]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># _cat_based_chunk_gen.dot_digraph() doesn&#39;t work in the above.</span>
+<span class="c1"># To make that work, need to make get_params_for_cat a function with signature</span>
+<span class="k">def</span> <span class="nf">get_params_for_cat</span><span class="p">(</span><span class="n">category</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cat_2_parms_map</span><span class="p">[</span><span class="n">category</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">call_normal_rand_on_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+
+<span class="n">_cat_based_chunk_gen</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span>
+    <span class="n">get_params_for_cat</span><span class="p">,</span>  <span class="c1"># get some params for a category</span>
+    <span class="n">call_normal_rand_on_params</span><span class="p">,</span>  <span class="c1"># draw from a normal distribution with those params</span>
+    <span class="n">iterize</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># cast the result to an int</span>
+    <span class="nb">list</span><span class="p">,</span>  <span class="c1"># make the arrays into lists (because it&#39;s nicer for display)</span>
+<span class="p">)</span>
+<span class="n">cat_based_chunk_gen</span> <span class="o">=</span> <span class="n">iterize</span><span class="p">(</span><span class="n">_cat_based_chunk_gen</span><span class="p">)</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">cat_based_chunk_gen</span><span class="p">(</span><span class="s1">&#39;abaa&#39;</span><span class="p">))</span>
+<span class="c1"># Example: [[4, 5, 4], [10, 9], [5, 5, 4], [5, 5, 5]]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># TODO: Replace norm_offset and norm_scale by a num normalizing function</span>
+<span class="c1"># TODO: Give control over spectr normalization</span>
+<div class="viewcode-block" id="get_spectr_from_number"><a class="viewcode-back" href="../../module_docs/slink/examples.html#slink.examples.get_spectr_from_number">[docs]</a><span class="k">def</span> <span class="nf">get_spectr_from_number</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">spectr</span><span class="p">,</span> <span class="n">norm_offset</span><span class="p">,</span> <span class="n">norm_scale</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is meant to be curried so that only num is left.</span>
+<span class="sd">    - spectr is meant to be fixed for a given dimension of data (where the nums are</span>
+<span class="sd">    coming from)</span>
+<span class="sd">    -</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spectr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spectr</span><span class="p">)</span>
+    <span class="n">normalized_num</span> <span class="o">=</span> <span class="p">(</span><span class="n">num</span> <span class="o">-</span> <span class="n">norm_offset</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm_scale</span>
+    <span class="n">original_spectr_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">spectr</span><span class="p">)</span>
+    <span class="n">spectr</span> <span class="o">=</span> <span class="n">spectr</span> <span class="o">+</span> <span class="n">normalized_num</span>  <span class="c1"># shift spectr by normalized_num</span>
+    <span class="n">factor_to_conserve_sum</span> <span class="o">=</span> <span class="n">original_spectr_sum</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">spectr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spectr</span> <span class="o">*</span> <span class="n">factor_to_conserve_sum</span></div>
+
+
+<span class="n">list_of_ints</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">iterize</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="nb">list</span><span class="p">,)</span>
+
+<span class="n">lists_of_list_of_ints</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">iterize</span><span class="p">(</span><span class="n">list_of_ints</span><span class="p">),</span> <span class="nb">list</span><span class="p">,)</span>
+
+
+<span class="n">_num_based_wf_gen</span> <span class="o">=</span> <span class="n">LineParametrized</span><span class="p">(</span>
+    <span class="p">(</span>
+        <span class="s1">&#39;get_spectr&#39;</span><span class="p">,</span>
+        <span class="n">partial</span><span class="p">(</span>
+            <span class="n">get_spectr_from_number</span><span class="p">,</span> <span class="n">spectr</span><span class="o">=</span><span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="n">norm_offset</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">norm_scale</span><span class="o">=</span><span class="mi">10</span>
+        <span class="p">),</span>
+    <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;wf_to_spectr&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;normalize_rfft&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">rfft_wf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rfft_wf</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="n">num_based_wf_gen</span> <span class="o">=</span> <span class="n">iterize</span><span class="p">(</span><span class="n">_num_based_wf_gen</span><span class="p">)</span>
+<span class="n">list_of_ints</span><span class="p">(</span><span class="n">_num_based_wf_gen</span><span class="p">(</span><span class="mi">10000</span><span class="p">))</span>
+<span class="c1"># Example: [1350, 229]</span>
+
+<span class="n">num_based_wf_gen</span> <span class="o">=</span> <span class="n">iterize</span><span class="p">(</span><span class="n">_num_based_wf_gen</span><span class="p">)</span>
+<span class="n">lists_of_list_of_ints</span><span class="p">(</span><span class="n">num_based_wf_gen</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">70</span><span class="p">]))</span>
+<span class="c1"># Example: [[1350, 739], [1350, 229], [1350, 728]]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
