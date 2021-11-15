@@ -39,6 +39,7 @@ from i2 import MultiFunc, Sig
 
 def dict_generator(*formulas):
     """helper function to make DictChain objects.
+    
     >>> import itertools
     >>> counter = itertools.count()
     >>> f = dict_generator(dict(
