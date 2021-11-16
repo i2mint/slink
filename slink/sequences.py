@@ -21,7 +21,7 @@ Highlights:
 ...     z=lambda x, y: x * y),
 ...     1
 ... )
->>> list(f())
+>>> list(f())  # doctest: +SKIP
 [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
 
 """
@@ -39,7 +39,7 @@ from i2 import MultiFunc, Sig
 
 def dict_generator(*formulas):
     """helper function to make DictChain objects.
-    
+
     >>> import itertools
     >>> counter = itertools.count()
     >>> f = dict_generator(dict(
@@ -218,7 +218,7 @@ class IterativeDictProcessing(MultiFunc):
 
     def __init__(self, **named_funcs):
         super().__init__(**named_funcs)
-        self.sigs = {name: Sig(func) for name, func in self.items()}
+        self.sigs = {name: Sig.sig_or_default(func) for name, func in self.items()}
 
     def __call__(self, seed_dict=None, preproc=copy.copy):
         if seed_dict is None:
@@ -317,7 +317,7 @@ def _prepare_formulas(formulas):
 
 
 def mk_monotone_sequence(delta_val_func=random.random, *args, start=0, **kwargs):
-    """Make a monotone sequence of numbers by accumulating
+    """Make a monotone sequence of numbers by accumulating random time durations/deltas.
 
     >>> from lined import Pipe
     >>> import itertools
