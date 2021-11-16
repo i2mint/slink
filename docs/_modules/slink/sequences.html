@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slink.sequences &mdash; slink 0.1.3 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slink.sequences &mdash; slink 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -98,7 +98,7 @@
 <span class="sd">...     z=lambda x, y: x * y),</span>
 <span class="sd">...     1</span>
 <span class="sd">... )</span>
-<span class="sd">&gt;&gt;&gt; list(f())</span>
+<span class="sd">&gt;&gt;&gt; list(f())  # doctest: +SKIP</span>
 <span class="sd">[{&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7}, {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}]</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -116,7 +116,7 @@
 
 <div class="viewcode-block" id="dict_generator"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.dict_generator">[docs]</a><span class="k">def</span> <span class="nf">dict_generator</span><span class="p">(</span><span class="o">*</span><span class="n">formulas</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;helper function to make DictChain objects.</span>
-<span class="sd">    </span>
+
 <span class="sd">    &gt;&gt;&gt; import itertools</span>
 <span class="sd">    &gt;&gt;&gt; counter = itertools.count()</span>
 <span class="sd">    &gt;&gt;&gt; f = dict_generator(dict(</span>
@@ -295,7 +295,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">named_funcs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">named_funcs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigs</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">Sig</span><span class="o">.</span><span class="n">sig_or_default</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preproc</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">seed_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -394,7 +394,7 @@
 
 
 <div class="viewcode-block" id="mk_monotone_sequence"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.mk_monotone_sequence">[docs]</a><span class="k">def</span> <span class="nf">mk_monotone_sequence</span><span class="p">(</span><span class="n">delta_val_func</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a monotone sequence of numbers by accumulating</span>
+    <span class="sd">&quot;&quot;&quot;Make a monotone sequence of numbers by accumulating random time durations/deltas.</span>
 
 <span class="sd">    &gt;&gt;&gt; from lined import Pipe</span>
 <span class="sd">    &gt;&gt;&gt; import itertools</span>
