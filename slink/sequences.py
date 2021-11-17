@@ -11,7 +11,7 @@ Highlights:
 >>> f({'session': 2})
 {'session': 2, 'phase': 20, 'something_dependent': 22, 'something_independent': 'hi'}
 
->>> from slink.sequences import dict_generator
+>>> from slink.sequences import dict_generator, Repeater
 >>> import itertools
 >>> counter = itertools.count()
 >>> f = dict_generator(dict(
@@ -21,19 +21,18 @@ Highlights:
 ...     z=lambda x, y: x * y),
 ...     1
 ... )
->>> list(f())  # doctest: +SKIP
+>>> list(f())
 [{'x': 7, 'y': 0, 'z': 0}, {'x': 7, 'y': 1, 'z': 7}, {'x': 7, 'y': 2, 'z': 14}]
 
 """
 
 from itertools import accumulate
 from functools import partial
-from typing import Callable, Iterable, Optional, Union, Any
+from typing import Callable, Any, Iterator
 import random
 import copy
 from dataclasses import dataclass
 
-from lined import CommandIter  # TODO: Only dependency on lined. Consider copying.
 from i2 import MultiFunc, Sig
 
 
@@ -316,6 +315,16 @@ def _prepare_formulas(formulas):
             )
 
 
+def call_repeatedly(func, *args, **kwargs) -> Iterator:
+    """
+    >>> func = enumerate(range(4)).__next__
+    >>> iterator = call_repeatedly(func)
+    >>> list(iterator)
+    [(0, 0), (1, 1), (2, 2), (3, 3)]
+    """
+    return iter(partial(func, *args, **kwargs), object())
+
+
 def mk_monotone_sequence(delta_val_func=random.random, *args, start=0, **kwargs):
     """Make a monotone sequence of numbers by accumulating random time durations/deltas.
 
@@ -336,4 +345,4 @@ def mk_monotone_sequence(delta_val_func=random.random, *args, start=0, **kwargs)
     >>> t  # doctest: +SKIP
     [7, 62.808676729760556, 129.67231010126588]
     """
-    return accumulate(CommandIter(delta_val_func, *args, **kwargs), initial=start)
+    return accumulate(call_repeatedly(delta_val_func, *args, **kwargs), initial=start)

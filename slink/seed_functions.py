@@ -18,8 +18,6 @@ import itertools
 import string
 import abc
 
-from lined import Command
-
 
 class RandomGeneratorBase:
     chunk_container: Callable = list
@@ -135,11 +133,16 @@ GenForField = Union[Dict[str, ArglessFunc], Iterable[Tuple[str, ArglessFunc]]]
 class RandomDictGenerator(RandomGeneratorBase):
     """Fixed-schema dict generator.
 
-    >>> from lined import Command
+    Note: More power found in `slink` `IterativeDictProcessing` and `generate_dict`
+
+    `RandomDictGenerator` is left here because it has the common `RandomGeneratorBase`
+    interface.
+
+    >>> from functools import partial
     >>> rand_gen = RandomDictGenerator(gen_for_field=(
-    ... ('rpm', Command(random.uniform, 100, 1000)),
-    ... ('temperature', Command(random.randint, 15, 25)),
-    ... ('id', Command(rand_string, str_size=(2, 5), alphabet='0123456789abcdef')),
+    ... ('rpm', partial(random.uniform, 100, 1000)),
+    ... ('temperature', partial(random.randint, 15, 25)),
+    ... ('id', partial(rand_string, str_size=(2, 5), alphabet='0123456789abcdef')),
     ... ('kind', RandomCategoricalGenerator(categories=[True, False, None]))
     ... ))
     >>> t = rand_gen()
@@ -172,9 +175,9 @@ class RandomDictGenerator(RandomGeneratorBase):
     """
 
     gen_for_field: GenForField = (
-        ('rpm', Command(random.uniform, 100, 1000)),
-        ('temperature', Command(random.randint, 15, 25)),
-        ('id', Command(rand_string, str_size=(2, 5), alphabet='0123456789abcdef')),
+        ('rpm', partial(random.uniform, 100, 1000)),
+        ('temperature', partial(random.randint, 15, 25)),
+        ('id', partial(rand_string, str_size=(2, 5), alphabet='0123456789abcdef')),
         ('kind', RandomCategoricalGenerator(categories=[True, False, None])),
     )
     chunk_container: Callable = list
