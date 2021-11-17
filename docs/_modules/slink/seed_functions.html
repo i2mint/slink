@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slink.seed_functions &mdash; slink 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slink.seed_functions &mdash; slink 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -94,8 +94,6 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">abc</span>
-
-<span class="kn">from</span> <span class="nn">lined</span> <span class="kn">import</span> <span class="n">Command</span>
 
 
 <span class="k">class</span> <span class="nc">RandomGeneratorBase</span><span class="p">:</span>
@@ -212,11 +210,16 @@
 <span class="k">class</span> <span class="nc">RandomDictGenerator</span><span class="p">(</span><span class="n">RandomGeneratorBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Fixed-schema dict generator.</span>
 
-<span class="sd">    &gt;&gt;&gt; from lined import Command</span>
+<span class="sd">    Note: More power found in `slink` `IterativeDictProcessing` and `generate_dict`</span>
+
+<span class="sd">    `RandomDictGenerator` is left here because it has the common `RandomGeneratorBase`</span>
+<span class="sd">    interface.</span>
+
+<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
 <span class="sd">    &gt;&gt;&gt; rand_gen = RandomDictGenerator(gen_for_field=(</span>
-<span class="sd">    ... (&#39;rpm&#39;, Command(random.uniform, 100, 1000)),</span>
-<span class="sd">    ... (&#39;temperature&#39;, Command(random.randint, 15, 25)),</span>
-<span class="sd">    ... (&#39;id&#39;, Command(rand_string, str_size=(2, 5), alphabet=&#39;0123456789abcdef&#39;)),</span>
+<span class="sd">    ... (&#39;rpm&#39;, partial(random.uniform, 100, 1000)),</span>
+<span class="sd">    ... (&#39;temperature&#39;, partial(random.randint, 15, 25)),</span>
+<span class="sd">    ... (&#39;id&#39;, partial(rand_string, str_size=(2, 5), alphabet=&#39;0123456789abcdef&#39;)),</span>
 <span class="sd">    ... (&#39;kind&#39;, RandomCategoricalGenerator(categories=[True, False, None]))</span>
 <span class="sd">    ... ))</span>
 <span class="sd">    &gt;&gt;&gt; t = rand_gen()</span>
@@ -249,9 +252,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">gen_for_field</span><span class="p">:</span> <span class="n">GenForField</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="s1">&#39;rpm&#39;</span><span class="p">,</span> <span class="n">Command</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)),</span>
-        <span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="n">Command</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span>
-        <span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">Command</span><span class="p">(</span><span class="n">rand_string</span><span class="p">,</span> <span class="n">str_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">alphabet</span><span class="o">=</span><span class="s1">&#39;0123456789abcdef&#39;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">&#39;rpm&#39;</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">25</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">rand_string</span><span class="p">,</span> <span class="n">str_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">alphabet</span><span class="o">=</span><span class="s1">&#39;0123456789abcdef&#39;</span><span class="p">)),</span>
         <span class="p">(</span><span class="s1">&#39;kind&#39;</span><span class="p">,</span> <span class="n">RandomCategoricalGenerator</span><span class="p">(</span><span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">])),</span>
     <span class="p">)</span>
     <span class="n">chunk_container</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">list</span>

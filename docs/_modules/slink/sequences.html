@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slink.sequences &mdash; slink 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slink.sequences &mdash; slink 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -88,7 +88,7 @@
 <span class="sd">&gt;&gt;&gt; f({&#39;session&#39;: 2})</span>
 <span class="sd">{&#39;session&#39;: 2, &#39;phase&#39;: 20, &#39;something_dependent&#39;: 22, &#39;something_independent&#39;: &#39;hi&#39;}</span>
 
-<span class="sd">&gt;&gt;&gt; from slink.sequences import dict_generator</span>
+<span class="sd">&gt;&gt;&gt; from slink.sequences import dict_generator, Repeater</span>
 <span class="sd">&gt;&gt;&gt; import itertools</span>
 <span class="sd">&gt;&gt;&gt; counter = itertools.count()</span>
 <span class="sd">&gt;&gt;&gt; f = dict_generator(dict(</span>
@@ -98,19 +98,18 @@
 <span class="sd">...     z=lambda x, y: x * y),</span>
 <span class="sd">...     1</span>
 <span class="sd">... )</span>
-<span class="sd">&gt;&gt;&gt; list(f())  # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt; list(f())</span>
 <span class="sd">[{&#39;x&#39;: 7, &#39;y&#39;: 0, &#39;z&#39;: 0}, {&#39;x&#39;: 7, &#39;y&#39;: 1, &#39;z&#39;: 7}, {&#39;x&#39;: 7, &#39;y&#39;: 2, &#39;z&#39;: 14}]</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">accumulate</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span> <span class="nn">lined</span> <span class="kn">import</span> <span class="n">CommandIter</span>  <span class="c1"># TODO: Only dependency on lined. Consider copying.</span>
 <span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">MultiFunc</span><span class="p">,</span> <span class="n">Sig</span>
 
 
@@ -393,6 +392,16 @@
             <span class="p">)</span>
 
 
+<div class="viewcode-block" id="call_repeatedly"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.call_repeatedly">[docs]</a><span class="k">def</span> <span class="nf">call_repeatedly</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; func = enumerate(range(4)).__next__</span>
+<span class="sd">    &gt;&gt;&gt; iterator = call_repeatedly(func)</span>
+<span class="sd">    &gt;&gt;&gt; list(iterator)</span>
+<span class="sd">    [(0, 0), (1, 1), (2, 2), (3, 3)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="nb">object</span><span class="p">())</span></div>
+
+
 <div class="viewcode-block" id="mk_monotone_sequence"><a class="viewcode-back" href="../../module_docs/slink/sequences.html#slink.sequences.mk_monotone_sequence">[docs]</a><span class="k">def</span> <span class="nf">mk_monotone_sequence</span><span class="p">(</span><span class="n">delta_val_func</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a monotone sequence of numbers by accumulating random time durations/deltas.</span>
 
@@ -413,7 +422,7 @@
 <span class="sd">    &gt;&gt;&gt; t  # doctest: +SKIP</span>
 <span class="sd">    [7, 62.808676729760556, 129.67231010126588]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">accumulate</span><span class="p">(</span><span class="n">CommandIter</span><span class="p">(</span><span class="n">delta_val_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">initial</span><span class="o">=</span><span class="n">start</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">accumulate</span><span class="p">(</span><span class="n">call_repeatedly</span><span class="p">(</span><span class="n">delta_val_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">initial</span><span class="o">=</span><span class="n">start</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
