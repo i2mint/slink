@@ -165,7 +165,7 @@ def _call_from_dict(kwargs: dict, func: Callable, sig: Sig):
 
     The sig argument needs to be the Sig(func) to work correctly.
     """
-    args, kwargs = sig.args_and_kwargs_from_kwargs(
+    args, kwargs = sig.mk_args_and_kwargs(
         kwargs,
         allow_excess=True,
         ignore_kind=True,
