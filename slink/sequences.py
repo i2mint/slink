@@ -28,7 +28,8 @@ Highlights:
 
 from itertools import accumulate
 from functools import partial
-from typing import Callable, Any, Iterator
+from typing import Any
+from collections.abc import Callable, Iterator
 import random
 import copy
 from dataclasses import dataclass
@@ -236,8 +237,9 @@ class IterativeDictProcessing(MultiFunc):
 
 
 import itertools
-from typing import Generator
-from typing import NewType, Tuple, Callable, Union
+from collections.abc import Generator
+from typing import NewType, Tuple, Union
+from collections.abc import Callable
 
 
 def new_type(name, typ, doc=None):
@@ -253,7 +255,7 @@ class Repeater:
     a number (unknown at the time of instantiation) that will be defined in a
     seed_dict"""
 
-    n_repetitions: Union[int, str]
+    n_repetitions: int | str
 
     def __call__(self, obj, seed_dict=None):
         if isinstance(self.n_repetitions, str):
@@ -270,8 +272,8 @@ class Repeater:
 #   leaving the dict_generator have more flexible argument handling.
 # TODO: Formulas is almost what IterativeDictProcessing is now. Merge.
 Identifier = new_type('Identifier', str)  # str.isidentifier
-Formula = new_type('Formula', Tuple[Identifier, Callable])
-Formulas = new_type('Formulas', Tuple[Formula])
+Formula = new_type('Formula', tuple[Identifier, Callable])
+Formulas = new_type('Formulas', tuple[Formula])
 FormulaSpec = new_type('FormulaSpec', Union[Formula, dict])
 RepeaterSpec = new_type('RepeaterSpec', Union[Repeater, int, str])
 Step = new_type('Step', Union[Formulas, Repeater])

@@ -1,13 +1,14 @@
 """Utils"""
 from dataclasses import dataclass
-from typing import Union, Iterable, Iterator, Optional
+from typing import Union, Optional
+from collections.abc import Iterable, Iterator
 from functools import partial
 
 
 field_is_missing = type('field_is_missing', (), {})()
 
 
-def _select_fields(d: dict, fields, handle_missing: Optional[str] = None, default=None):
+def _select_fields(d: dict, fields, handle_missing: str | None = None, default=None):
     """Helper of select_fields; selects fields from a single dict,
     with control on what to do if the field is missing.
 
@@ -35,7 +36,7 @@ def _select_fields(d: dict, fields, handle_missing: Optional[str] = None, defaul
 def select_fields(
     iterable_of_dicts: Iterable[dict],
     fields,
-    handle_missing: Optional[str] = None,
+    handle_missing: str | None = None,
     default=None,
 ):
     """Get an iterable of "sub-dicts". That is, dicts with only specified fields.
@@ -74,7 +75,7 @@ class GetFromIter:
 
     """
 
-    iterator: Union[Iterable, Iterator]
+    iterator: Iterable | Iterator
 
     def __post_init__(self):
         if not isinstance(self.iterator, Iterator):

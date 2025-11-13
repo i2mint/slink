@@ -11,7 +11,8 @@ a chunk (`n>1`), or an iterable (`n=0`) that may or may not be a finite one.
 """
 from dataclasses import dataclass
 from functools import partial
-from typing import Callable, Union, Collection, Iterable, Tuple, Any, Dict, Sequence
+from typing import Union, Tuple, Any, Dict
+from collections.abc import Callable, Collection, Iterable, Sequence
 from random import randint
 import random
 import itertools
@@ -105,7 +106,7 @@ class RandomStringGenerator(RandomGeneratorBase):
     4
     """
 
-    str_size: Union[int, Tuple[int, int]] = (1, 9)
+    str_size: int | tuple[int, int] = (1, 9)
     alphabet: Collection = string.ascii_letters
     joiner: Callable[[Iterable], str] = ''.join
 
@@ -126,7 +127,7 @@ DFLT_RAND_FUNC_FOR_TYPE = (
 
 
 ArglessFunc = Callable[[], Any]
-GenForField = Union[Dict[str, ArglessFunc], Iterable[Tuple[str, ArglessFunc]]]
+GenForField = Union[dict[str, ArglessFunc], Iterable[tuple[str, ArglessFunc]]]
 
 
 @dataclass
