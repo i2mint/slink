@@ -1,0 +1,22 @@
+# slink
+
+> Generate sequences
+
+
+## Pages
+
+- [slink](index.html.md): Generate sequences
+- [API reference](api.html.md): | &#96;slink&#96;   | Slink: Sequence generator   |
+- [slink](_autosummary/slink.html.md): Slink: Sequence generator
+- [slink.seed_functions](_autosummary/slink.seed_functions.html.md): Seed functions are the functions that produce the first sequence of the pipeline
+- [slink.sequences](_autosummary/slink.sequences.html.md): Tools to make sequences
+- [slink.util](_autosummary/slink.util.html.md): | &#96;select_fields&#96;(iterable_of_dicts, fields&#91;, ...&#93;)   | Get an iterable of "sub-dicts".   |
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-22 22:31 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+
+## Optional
+
+- [slink.md](slink.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

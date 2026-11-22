@@ -1,0 +1,25 @@
+slink.sequences
+===============
+
+.. automodule:: slink.sequences
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      call_repeatedly
+      dict_generator
+      flatten_generators_recursively
+      mk_monotone_sequence
+      new_type
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DictChain
+      IterativeDictProcessing
+      Repeater
+      ReturnObj
+   

@@ -1,0 +1,15 @@
+﻿slink
+=====
+
+.. automodule:: slink
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   seed_functions
+   sequences
+   util

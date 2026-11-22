@@ -1,0 +1,18 @@
+slink.util
+==========
+
+.. automodule:: slink.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      select_fields
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      GetFromIter
+   

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-11-22T22:31:52Z",
+  "package": {
+    "name": "slink",
+    "version": "0.1.6",
+    "display_name": "slink",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "08022908c11ce4ba5d22797963d24f236888ca8b",
+    "short_commit": "0802290",
+    "branch": "master",
+    "tags": [],
+    "dirty": false,
+    "remote_url": "https://github.com/i2mint/slink",
+    "commit_url": "https://github.com/i2mint/slink/commit/08022908c11ce4ba5d22797963d24f236888ca8b",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "i2mint/slink",
+    "sha": "08022908c11ce4ba5d22797963d24f236888ca8b",
+    "sha_in_history": true,
+    "ref": "refs/heads/master",
+    "ref_name": "master",
+    "run_id": "45078085915",
+    "run_url": "https://github.com/i2mint/slink/actions/runs/45078085915",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.23",
+    "sphinx": "9.1.1",
+    "docutils": "0.22.4",
+    "python": "3.12.16"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "furo",
+    "accent": "#833673",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 4,
+    "objects_documented": 18
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.1.6",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/i2mint/slink && cd slink\ngit checkout 08022908c11ce4ba5d22797963d24f236888ca8b\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

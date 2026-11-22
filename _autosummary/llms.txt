@@ -1,0 +1,15 @@
+# slink
+
+> Generate sequences
+
+
+## Pages in this subsection
+
+- [slink](slink.html.md): Slink: Sequence generator
+- [slink.seed_functions](slink.seed_functions.html.md): Seed functions are the functions that produce the first sequence of the pipeline
+- [slink.sequences](slink.sequences.html.md): Tools to make sequences
+- [slink.util](slink.util.html.md): | &#96;select_fields&#96;(iterable_of_dicts, fields&#91;, ...&#93;)   | Get an iterable of "sub-dicts".   |
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.
